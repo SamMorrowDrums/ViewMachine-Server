@@ -27,6 +27,10 @@ myModule = (function (VM){
 }(ViewMachine));
 ```
 
+**To Follow along with the below examples, please include the aboce HTML Script tags in your head, and a blank `<body></body>` tag**
+
+*Some browsers may not allow you to include local JS files, if you have problems, either work on a server or include the contents of the two script files in script tags in your html page.*
+
 Basic Types
 -----------
 
