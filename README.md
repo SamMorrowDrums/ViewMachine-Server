@@ -46,6 +46,18 @@ var $list = ViewMachine.makeList(myList);
 $('body').append($list);
 ```
 
+**Result**
+```html
+<body>
+  <ul class="list">
+    <li class="list" id="1">These</li>
+    <li class="list" id="2">Are</li>
+    <li class="list" id="3">List</li>
+    <li class="list" id="4">Elements</li>
+  </ul>
+</body>
+```
+
 Here is another example, with which you could create a list based menu (the keys are IDs, so you can use JS event listeners on the IDs, rather than using hyperlinks):
 
 ```javascript
@@ -60,6 +72,19 @@ $('#home').click(function(e){
 });
 
 ```
+
+**Result**
+```html
+<body>
+  <ul class="list">
+    <li class="item" id="home">HOME</li>
+    <li class="item" id="users">Users</li>
+    <li class="item" id="system">System Settings</li>
+    <li class="item" id="logs">Logs</li>
+  </ul>
+</body>
+```
+
 
 If you are feeling really adventurous, you can use any depth of nested objects and lists, and VM will try it's best to do what it thinks you want, however this is not easy, as people could reasonably expect different behaviours. You could also cause a stack overflow it it's too deep an object, as VM will inspect the object recursively.
 
@@ -105,6 +130,49 @@ var $table = ViewMachine.makeTable(keys, data);
 $('body').append($table);
 ```
 
+**Result**
+```html
+<body>
+  <table class="classic">
+    <thead>
+      <tr class="title">
+        <th class="first name">First Name</th>
+        <th class="last name">Last Name</th>
+        <th class="age">Age</th>
+        <th class="favourite fruits">Favourite Fruits</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row">
+        <td class="first name">Steve</td>
+        <td class="last name">Davis</td>
+        <td class="age">20</td>
+        <td class="favourite fruits">Limes, Lemons, Pears</td>
+      </tr>
+      <tr class="row">
+        <td class="first name">Sam</td>
+        <td class="last name">Morrow</td>
+        <td class="age">27</td>
+        <td class="favourite fruits">figs</td>
+      </tr>
+      <tr class="row">
+        <td class="first name">Steve</td>
+        <td class="last name">Davis</td>
+        <td class="age">15</td>
+        <td class="favourite fruits">tomatoes, lychees</td>
+      </tr>
+      <tr class="row">
+        <td class="first name">Kermit</td>
+        <td class="last name">The Frog</td>
+        <td class="age none"></td>
+        <td class="favourite fruits">pineapple</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+```
+
+
 If you take a look at the generated table,  and then look at 'person X' in the data, you will see that the 'Favourite Fruits' property was nested in a 'preferences' object, and there was other information beside it, but only the selected keys were found and displayed, recursively.
 
 #### Forms
@@ -115,6 +183,53 @@ Forms have more variation, and require specific ordering. This is achieved by us
 var form = ViewMachine.exampleForm;
 var $form = ViewMachine.makeForm(form);
 $('body').append($form);
+```
+
+**Result**
+```html
+<body>
+  <form class="MyForm">
+    <fieldset class="myFields">
+      <label class="customClass" for="myField">My Fav Textarea:</label>
+      <textarea name="myField" id="myField"></textarea>
+      <br>
+      <label class="input" for="myField">My Fav Textarea:</label>
+      <input name="myField" id="myField">
+      <br>
+      <label class="radio" for="Male">Male:</label>
+      <input class="radio" id="Male" type="radio" name="label2" value="m"></input>
+      <label class="radio" for="Female">Female:</label>
+      <input class="radio" id="Female" type="radio" name="label2" value="f" checked="checked"></input>
+      <br>
+      <label class="checkbox" for="Male">Male:</label>
+      <input class="checkbox" id="Male" type="checkbox" name="Male" value="m"></input>
+      <label class="checkbox" for="Female">Female:</label>
+      <input class="checkbox" id="Female" type="checkbox" name="Female" value="f" checked="checked"></input>
+      <br>
+      <label class="select" for="selectBox">My Select Box:</label>
+      <select class="selectBox" id="selectBox">
+        <option class="select" id="1" value="1">opt1</option><option class="select" id="2" value="2" selected="selected">opt2</option>
+        <option class="select" id="3" value="3">opt3</option>
+      </select>
+      <br>
+      <label class="select" for="selectBox2">Same - No Values Or Selected Specified:</label>
+      <select class="selectBox2" id="selectBox2">
+        <option class="select" id="opt1" value="opt1">opt1</option>
+        <option class="select" id="opt2" value="opt2">opt2</option>
+        <option class="select" id="opt3" value="opt3">opt3</option>
+      </select>
+      <br>
+      <label class="select multiple" for="multipleSelect">Same - No Values Or Selected Specified:</label>
+      <select class="multipleSelect" id="multipleSelect" multiple="multiple">
+        <option class="select multiple" id="opt1" value="opt1">opt1</option>
+        <option class="select multiple" id="opt2" value="opt2">opt2</option>
+        <option class="select multiple" id="opt3" value="opt3">opt3</option>
+      </select>
+      <br>
+      <button class="button" id="myButton" onclick="alert('I will not submit to you'); return false;">Submit Yourself!</button><br>
+    </fieldset>
+  </form>
+</body>
 ```
 
 #### General Elements
@@ -138,6 +253,16 @@ $('theid1').css('font-size', '50pt');
 $('.myclass').parent().css('width', '400px');
 $('.myclass').parent().css('background-color', 'blue');
 ```
+
+**Result**
+```html
+<body>
+  <div style="width: 400px; background-color: blue;">
+    <p class="myclass" id="theid1" align="right" style="color: red;">Some Text</p>
+  </div>
+</body>
+```
+
 
 Only the first parameter is required, and all of the others can be abstained from by simply usuing an empty string `''` in place of the parameter.
 
@@ -174,6 +299,72 @@ $template = ViewMachine.build(myTemplate);
 
 //Now add the DOM
 $('body').append($template);
+```
+
+**Result**
+```html
+<body>
+  <div class="listForm view">
+    <div class="myclass">
+      <h2>Example Template</h2>
+      <ul class="list">
+        <li class="list" id="1">Birds</li>
+        <li class="list" id="2">Bees</li>
+        <li class="list" id="3">Camels</li>
+        <li class="list" id="4">Tigers</li>
+      </ul>
+    </div>
+    <div class="anotherclass">
+      <h2>Random Form</h2>
+      <form class="MyForm">
+        <fieldset class="myFields">
+          <label class="customClass" for="myField">My Fav Textarea:</label>
+          <textarea name="myField" id="myField"></textarea>
+          <br>
+          <label class="input" for="myField">My Fav Textarea:</label>
+          <input name="myField" id="myField">
+          <br>
+          <label class="radio" for="Male">Male:</label>
+          <input class="radio" id="Male" type="radio" name="label2" value="m"></input>
+          <label class="radio" for="Female">Female:</label>
+          <input class="radio" id="Female" type="radio" name="label2" value="f" checked="checked"></input>
+          <br>
+          <label class="checkbox" for="Male">Male:</label>
+          <input class="checkbox" id="Male" type="checkbox" name="Male" value="m"></input>
+          <label class="checkbox" for="Female">Female:</label>
+          <input class="checkbox" id="Female" type="checkbox" name="Female" value="f" checked="checked"></input>
+          <br>
+          <label class="select" for="selectBox">My Select Box:</label>
+          <select class="selectBox" id="selectBox"><option class="select" id="1" value="1">opt1</option>
+            <option class="select" id="2" value="2" selected="selected">opt2</option>
+            <option class="select" id="3" value="3">opt3</option>
+          </select>
+          <br>
+          <label class="select" for="selectBox2">Same - No Values Or Selected Specified:</label>
+          <select class="selectBox2" id="selectBox2">
+            <option class="select" id="opt1" value="opt1">opt1</option>
+            <option class="select" id="opt2" value="opt2">opt2</option>
+            <option class="select" id="opt3" value="opt3">opt3</option>
+          </select>
+          <br>
+          <label class="select multiple" for="multipleSelect">Same - No Values Or Selected Specified:</label>
+          <select class="multipleSelect" id="multipleSelect" multiple="multiple">
+            <option class="select multiple" id="opt1" value="opt1">opt1</option>
+            <option class="select multiple" id="opt2" value="opt2">opt2</option>
+            <option class="select multiple" id="opt3" value="opt3">opt3</option>
+          </select>
+          <br>
+          <button class="button" id="myButton" onclick="alert('I will not submit to you'); return false;">Submit Yourself!</button>
+          <br>
+        </fieldset>
+      </form>
+    </div>
+    <div class="x">
+      <p>A Paragraph</p>
+    </div>
+  </div>
+</body>
+
 ```
 
 You can now construct complex structures, with parts that are only generated after an AJAX call, and then you can use the more basic generation to replace parts later on, or to add parts.
