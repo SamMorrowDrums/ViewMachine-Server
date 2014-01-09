@@ -1,12 +1,12 @@
 {
   "name": "viewmachine",
-  "title": "ViewMachine jQuery Templating System",
-  "description": "jQuery plugin for templating dynamic websites in Javascript exclusively, rather than using snippets of HTML.",
+  "title": "jQuery ViewMachine",
+  "description": "jQuery plugin for templating dynamic websites in Javascript exclusively, rather than using snippets of HTML. If you want to rapidly template a site, with resuable javascript, this plugin fits the bill",
   "keywords": [
     "templating",
     "templates"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Sam Morrow",
     "url": "https://github.com/SamMorrowDrums"
