@@ -151,7 +151,7 @@ The best part of this system is that you can dymaically render complex templates
 
 var listForm = function () {
   this.name = "listForm";
-  this.structure = [{"div:listPane": [{h2: "Edit Users"}, {list: ViewMachine.exampleList}]}, {"div:formPane": [{h2: "Add User"}, {form: ViewMachine.exampleForm}]}, {"div:x": {p: "A Paragraph"}}];
+  this.structure = [{"div:myclass": [{h2: "Example Template"}, {list: ViewMachine.exampleList}]}, {"div:anotherclass": [{h2: "Random Form"}, {form: ViewMachine.exampleForm}]}, {"div:x": {p: "A Paragraph"}}];
   var that = this;
   this.changeList = function (newList) {that.structure[0]["div:myclass"][1].list = newList; return; };
   this.changeForm = function (newForm) {that.structure[1]["div:anotherclass"][1].form = newForm; return; };
