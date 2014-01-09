@@ -1,0 +1,33 @@
+{
+  "name": "viewmmachine",
+  "title": "ViewMachine jQuery Templating System",
+  "description": "jQuery plugin for templating dynamic websites in Javascript exclusively, rather than using snippets of HTML.",
+  "keywords": [
+    "templating",
+    "templates"
+  ],
+  "version": "0.0.1",
+  "author": {
+    "name": "Sam Morrow",
+    "url": "https://github.com/SamMorrowDrums/ViewMachine"
+  },
+  "maintainers": [
+    {
+      "name": "Sam Morrow",
+      "email": "info@sammorrowdrums.com",
+      "url": "http://www.sammorrowdrums.com"
+    }
+  ],
+  "licences": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/SamMorrowDrums/ViewMachine/master/mit-licence.txt" 
+    }
+  ],
+  "bugs": "https://github.com/SamMorrowDrums/ViewMachine/issues",
+  "homepage": "https://github.com/SamMorrowDrums/ViewMachine",
+  "docs": "https://github.com/SamMorrowDrums/ViewMachine",
+  "dependencies": {
+    "jquery": ">=1.10"
+  }
+}
