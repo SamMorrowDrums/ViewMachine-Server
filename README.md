@@ -7,7 +7,7 @@ Using VM enables you to keep your entire codebase in Javascript, rather than usi
 
 Please use, fork, improve and submit a pull request if you want to contribute. All contributions welcome.
 
-**To Follow along with the below examples, please include the below HTML Script tags in your head, and a blank `<body></body>` tag**
+**To Follow along with the below examples, please include the below HTML Script tags in your head, and a blank `<body></body>` tag. You can paste example code directly into the javascript console, in the eveloper tools of every major browser**
 
 *Some browsers may not allow you to include local JS files, if you have problems, either work on a server or include the contents of the two script files in script tags in your html page.*
 
