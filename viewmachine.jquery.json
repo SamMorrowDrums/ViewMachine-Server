@@ -1,5 +1,5 @@
 {
-  "name": "viewmmachine",
+  "name": "viewmachine",
   "title": "ViewMachine jQuery Templating System",
   "description": "jQuery plugin for templating dynamic websites in Javascript exclusively, rather than using snippets of HTML.",
   "keywords": [
@@ -18,7 +18,7 @@
       "url": "http://www.sammorrowdrums.com"
     }
   ],
-  "licences": [
+  "licenses": [
     {
       "type": "MIT",
       "url": "https://raw.github.com/SamMorrowDrums/ViewMachine/master/mit-licence.txt" 
