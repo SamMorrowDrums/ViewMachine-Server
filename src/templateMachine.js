@@ -1,4 +1,8 @@
-var ViewMachine = (function (VM) {
+if (ViewMachine === undefined) {
+  var ViewMachine = {};
+}
+
+ViewMachine = (function (VM) {
   'use strict';
   var generate;
   generate = function (obj, $content) {
