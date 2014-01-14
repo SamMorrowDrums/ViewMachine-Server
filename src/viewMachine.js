@@ -14,7 +14,7 @@ ViewMachine = (function (machines) {
   */
 
   //New constructor function, to begin creating DOM element object constructors and prototypes
-  var El = function (element, properties) {
+  machines.El = function (element, properties) {
     this.element = element;
     if (properties === undefined) {
       properties = {};
@@ -23,12 +23,12 @@ ViewMachine = (function (machines) {
     this.children = [];
     this.getId = function () {
       //Basic function for getting unique IDs
-      return Math.floor(Math.random()* 10000000 + 1);
+      return (Math.floor(Math.random()* 10000000 + 1)).toString();
     };
     return this;
   };
-  El.prototype = {
-    toString: function (draw) {
+  machines.El.prototype = {
+    HTML: function (draw) {
       if (!this.drawn) {
         this.properties.id = this.getId();
       }
@@ -39,14 +39,14 @@ ViewMachine = (function (machines) {
       var el = $("<" + this.element + ">", this.properties);
 
       for (var child in this.children) {
-        $(el).append(this.children[child].toString(draw));
+        $(el).append(this.children[child].HTML(draw));
       }
 
       return el;
     },
     draw: function () {
       //Current
-      var el = this.toString();
+      var el = this.HTML();
       
       //Parent
       if (this.drawn) {

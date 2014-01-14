@@ -99,6 +99,74 @@ ViewMachine = (function (machines) {
     This is a library of HTML element auto-constructors, that put single element types, or groups of elements like an unsorted list (ul, li), in the DOM (where applicable, capable of introspection, for more complex data. Designed to be used by template systems
     Depends on jQuery
   */
+
+  //New constructor function, to begin creating DOM element object constructors and prototypes
+  machines.El = function (element, properties) {
+    this.element = element;
+    if (properties === undefined) {
+      properties = {};
+    }
+    this.properties = properties;
+    this.children = [];
+    this.getId = function () {
+      //Basic function for getting unique IDs
+      return (Math.floor(Math.random()* 10000000 + 1)).toString();
+    };
+    return this;
+  };
+  machines.El.prototype = {
+    HTML: function (draw) {
+      if (!this.drawn) {
+        this.properties.id = this.getId();
+      }
+      if (draw) {
+        this.drawn = true;
+      }
+
+      var el = $("<" + this.element + ">", this.properties);
+
+      for (var child in this.children) {
+        $(el).append(this.children[child].HTML(draw));
+      }
+
+      return el;
+    },
+    draw: function () {
+      //Current
+      var el = this.HTML();
+      
+      //Parent
+      if (this.drawn) {
+        this.remove();
+      }
+      if (typeof this.parent === 'string') {
+        $(this.parent).append(el);
+        this.drawn = true;
+
+
+      } else if (this.parent.drawn === true) {
+        $('#' + this.parent.properties.id).append(el);
+        this.drawn = true;
+      } else {
+        throw({name: 'DrawError', message: 'Parent not drawn'});
+      }
+      return this;
+    },
+    remove: function () {
+      if (this.drawn) {
+        $('#' + this.properties.id).remove();
+        this.drawn = false;
+        return this;
+      }
+    },
+    append: function (el) {
+      el.parent = this;
+      this.children.push(el);
+      return this;
+    },
+    parent: 'body'
+  };
+
   machines.titles = {example: "Example"};
   machines.cleanTitles = function (title, replacement) {
   // Function to provide replacements for object keys used in templates, enables multi-language/clean titles for elements like tables, generated from JS objects
