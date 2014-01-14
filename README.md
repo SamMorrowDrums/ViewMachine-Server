@@ -17,9 +17,16 @@ Usage
 In your HTML include:
 
 ```html
-<script src="js/viewMachine.js"></script>
-<script src="js/templateMachine.js"></script>
+<script src="viewmachine.js"></script>
 ```
+
+*or*
+
+```html
+<script src="viewmachine.min.js"></script>
+```
+
+Alternatively you can visit the JSFiddle at: http://jsfiddle.net/Vk9r9/
 
 Then in your main JS file you can already use ViewMachine, however you can add `Viewmachine = VM` to the top of your JS file, if VM won't conflict with anything in your namespace.
 
