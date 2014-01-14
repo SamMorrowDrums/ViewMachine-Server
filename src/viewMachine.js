@@ -28,15 +28,38 @@ ViewMachine = (function (machines) {
     return this;
   };
   El.prototype = {
-    draw: function () {
-      this.properties.id = this.getId();
-      this.drawn = true;
+    toString: function (draw) {
+      if (!this.drawn) {
+        this.properties.id = this.getId();
+      }
+      if (draw) {
+        this.drawn = true;
+      }
+
       var el = $("<" + this.element + ">", this.properties);
+
+      for (var child in this.children) {
+        $(el).append(this.children[child].toString(draw));
+      }
+
+      return el;
+    },
+    draw: function () {
+      //Current
+      var el = this.toString();
+      
+      //Parent
+      if (this.drawn) {
+        this.remove();
+      }
       if (typeof this.parent === 'string') {
         $(this.parent).append(el);
+        this.drawn = true;
+
+
       } else if (this.parent.drawn === true) {
-        for var
         $('#' + this.parent.properties.id).append(el);
+        this.drawn = true;
       } else {
         throw({name: 'DrawError', message: 'Parent not drawn'});
       }
@@ -44,6 +67,7 @@ ViewMachine = (function (machines) {
     },
     remove: function () {
       if (this.drawn) {
+        $('#' + this.properties.id).remove();
         this.drawn = false;
         return this;
       }
