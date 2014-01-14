@@ -20,6 +20,7 @@ ViewMachine = (function (machines) {
       properties = {};
     }
     this.properties = properties;
+    this.children = [];
     this.getId = function () {
       //Basic function for getting unique IDs
       return Math.floor(Math.random()* 10000000 + 1);
@@ -31,14 +32,26 @@ ViewMachine = (function (machines) {
       this.properties.id = this.getId();
       this.drawn = true;
       var el = $("<" + this.element + ">", this.properties);
-      $(this.parent).append(el);
-      return el;
+      if (typeof this.parent === 'string') {
+        $(this.parent).append(el);
+      } else if (this.parent.drawn === true) {
+        for var
+        $('#' + this.parent.properties.id).append(el);
+      } else {
+        throw({name: 'DrawError', message: 'Parent not drawn'});
+      }
+      return this;
     },
     remove: function () {
       if (this.drawn) {
         this.drawn = false;
-        return $('#' + this.properties.id).remove();
+        return this;
       }
+    },
+    append: function (el) {
+      el.parent = this;
+      this.children.push(el);
+      return this;
     },
     parent: 'body'
   };
