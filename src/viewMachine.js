@@ -29,6 +29,7 @@ ViewMachine = (function (machines) {
       return (Math.floor(Math.random()* 10000000 + 1)).toString();
     },
     HTML: function (draw) {
+      //Returns HTML string of self and all child elements
       if (!this.drawn) {
         this.properties.id = this.getId();
       }
@@ -45,7 +46,7 @@ ViewMachine = (function (machines) {
       return el;
     },
     draw: function () {
-      //Current
+      //Draws element, including all children, on the DOM
       if (this.drawn) {
         //If already on the DOM, just redraw
         this.replace(this.HTML(true));
@@ -66,27 +67,40 @@ ViewMachine = (function (machines) {
       return this;
     },
     remove: function () {
+      //Removes elements from their parents and from DOM if drawn
       if (this.drawn) {
         $('#' + this.properties.id).remove();
         this.drawn = false;
-        if (typeof this.parent !== 'string') {
-          var children = this.parent.children;
-          for (var child in children) {
-            if (children[child].properties.id === this.properties.id) {
-              this.parent.children.splice(child, 1);
-            }
+      }
+      this.properties.id = this.getId();
+      if (typeof this.parent !== 'string') {
+        this.getId();
+        var children = this.parent.children;
+        for (var child in children) {
+          if (children[child].properties.id === this.properties.id) {
+            this.parent.children.splice(child, 1);
           }
         }
-        return this;
       }
+      return this;
     },
     replace: function (HTML) {
+      //Replaces drawn elements with HTML, designed for updating DOM when 'this' is already drawn, and non-persistant replacement
       if (this.drawn) {
         $('#' + this.properties.id).replaceWith(HTML);
         return this;
       }
     },
+    hide: function () {
+      //Function for temporary hiding of an element, non-persistent version of removal
+      if (this.drawn) {
+        $('#' + this.properties.id).remove();
+        this.drawn = false;
+      }
+      return this;
+    },
     append: function (el) {
+      //Sets up the parent child relationship of DOM element objects
       el.parent = this;
       this.children.push(el);
       return this;
