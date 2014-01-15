@@ -99,7 +99,6 @@ ViewMachine = (function (machines) {
     This is a library of HTML element auto-constructors, that put single element types, or groups of elements like an unsorted list (ul, li), in the DOM (where applicable, capable of introspection, for more complex data. Designed to be used by template systems
     Depends on jQuery
   */
-
   //New constructor function, to begin creating DOM element object constructors and prototypes
   machines.El = function (element, properties) {
     this.element = element;
@@ -108,13 +107,13 @@ ViewMachine = (function (machines) {
     }
     this.properties = properties;
     this.children = [];
-    this.getId = function () {
-      //Basic function for getting unique IDs
-      return (Math.floor(Math.random()* 10000000 + 1)).toString();
-    };
     return this;
   };
   machines.El.prototype = {
+    getId: function () {
+      //Basic function for getting unique IDs
+      return (Math.floor(Math.random()* 10000000 + 1)).toString();
+    },
     HTML: function (draw) {
       if (!this.drawn) {
         this.properties.id = this.getId();
@@ -165,6 +164,15 @@ ViewMachine = (function (machines) {
       return this;
     },
     parent: 'body'
+  };
+
+  //New version of the makeList, now a constructor for a list type
+  machines.List = function (list) {
+    var el = new machines.El('ul');
+    for (var item in list) {
+      el.append(new machines.El('li', {text: list[item]}));
+    }
+    return el;
   };
 
   machines.titles = {example: "Example"};
