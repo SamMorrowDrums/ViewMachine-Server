@@ -156,14 +156,20 @@ ViewMachine = (function (machines) {
       if (this.drawn) {
         $('#' + this.properties.id).remove();
         this.drawn = false;
+        if (typeof this.parent !== 'string') {
+          var children = this.parent.children;
+          for (var child in children) {
+            if (children[child].properties.id === this.properties.id) {
+              this.parent.children.splice(child, 1);
+            }
+          }
+        }
         return this;
       }
     },
     replace: function (HTML) {
-      console.log('here');
       if (this.drawn) {
         $('#' + this.properties.id).replaceWith(HTML);
-        this.drawn = false;
         return this;
       }
     },
