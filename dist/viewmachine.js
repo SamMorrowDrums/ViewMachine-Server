@@ -105,6 +105,7 @@ ViewMachine = (function (machines) {
     if (properties === undefined) {
       properties = {};
     }
+    this.drawn = false;
     this.properties = properties;
     this.children = [];
     return this;
@@ -132,28 +133,36 @@ ViewMachine = (function (machines) {
     },
     draw: function () {
       //Current
-      var el = this.HTML();
-      
-      //Parent
       if (this.drawn) {
-        this.remove();
-      }
-      if (typeof this.parent === 'string') {
-        $(this.parent).append(el);
-        this.drawn = true;
-
-
-      } else if (this.parent.drawn === true) {
-        $('#' + this.parent.properties.id).append(el);
-        this.drawn = true;
+        //If already on the DOM, just redraw
+        this.replace(this.HTML(true));
       } else {
-        throw({name: 'DrawError', message: 'Parent not drawn'});
+        var el = this.HTML(true);
+        if (typeof this.parent === 'string') {
+          //If parent is set as a jQuery identifier (default: body), then append to that element
+          $(this.parent).append(el);
+          this.drawn = true;
+        } else if (this.parent.drawn === true) {
+          //If parent is a ViewMachine object, append self to the parent
+          $('#' + this.parent.properties.id).append(el);
+          this.drawn = true;
+        } else {
+          throw('DrawError: Parent element not on page');
+        }
       }
       return this;
     },
     remove: function () {
       if (this.drawn) {
         $('#' + this.properties.id).remove();
+        this.drawn = false;
+        return this;
+      }
+    },
+    replace: function (HTML) {
+      console.log('here');
+      if (this.drawn) {
+        $('#' + this.properties.id).replaceWith(HTML);
         this.drawn = false;
         return this;
       }
