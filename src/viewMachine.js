@@ -18,6 +18,9 @@ ViewMachine = (function (machines) {
     if (properties === undefined) {
       properties = {};
     }
+    if (properties.id) {
+      this.id = properties.id;
+    }
     this.drawn = false;
     this.properties = properties;
     this.children = [];
@@ -25,7 +28,10 @@ ViewMachine = (function (machines) {
   };
   machines.El.prototype = {
     getId: function () {
-      //Basic function for getting unique IDs
+      //Basic function for getting unique IDs or set ones
+      if (this.id) {
+        return this.id;
+      }
       return (Math.floor(Math.random()* 10000000 + 1)).toString();
     },
     HTML: function (draw) {
