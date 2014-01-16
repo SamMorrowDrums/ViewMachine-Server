@@ -226,10 +226,23 @@ ViewMachine = (function (machines) {
   };
 
   //New version of the makeList, now a constructor for a list type
-  machines.List = function (list) {
+  machines.List = function (arg) {
+    //Construct html list object
     var el = new machines.El('ul');
-    for (var item in list) {
-      el.append(new machines.El('li', {text: list[item]}));
+    if (typeof arg === "number") {
+      for (var n = 0; n < arg; n++) {
+        el.append(new machines.El('li'));
+      }
+    } else if (Array.isArray(arg)) {
+      var value;
+      for (var item in arg) {
+        if (typeof arg[item] === 'object') {
+          value = arg[item];
+        } else {
+          value = {text: arg[item]};
+        }
+        el.append(new machines.El('li', value));
+      }
     }
     return el;
   };
