@@ -257,7 +257,7 @@ ViewMachine = (function (machines) {
     return el;
   };
   machines.List = function (arg) {
-    //Construct html list object takes either a JS list of elements, or an object with parent properties for the UL, and a child property for the list
+    //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
     var parent = 'ul', children = arg;
     if (arg.parent) {
       parent = {type: 'ul', properties: arg.parent};
@@ -265,6 +265,17 @@ ViewMachine = (function (machines) {
     }
     return machines.ParentEl(parent, 'li', children);
   };
+
+  machines.Select = function (arg) {
+    //Construct html Select object takes either a number, JS list, or an object with 'parent' containing properties for the select, and a child property containing a list
+    var parent = 'select', children = arg;
+    if (arg.parent) {
+      parent = {type: 'select', properties: arg.parent};
+      children = arg.children;
+    }
+    return machines.ParentEl(parent, 'option', children);
+  };
+
   machines.titles = {example: "Example"};
   machines.cleanTitles = function (title, replacement) {
   // Function to provide replacements for object keys used in templates, enables multi-language/clean titles for elements like tables, generated from JS objects
