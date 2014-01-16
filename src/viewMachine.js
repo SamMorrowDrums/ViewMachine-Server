@@ -135,31 +135,49 @@ ViewMachine = (function (machines) {
       }
       return this;
     },
-    parent: 'body'
+    parent: 'body',
+    type: 'ViewMachine'
   };
 
   //New version of the makeList, now a constructor for a list type
-  machines.List = function (arg) {
-    //Construct html list object
-    var el = new machines.El('ul');
+  machines.ParentEl = function (type, childType, arg) {
+    //Construct html parent object (create lists, select boxes, or append a list of children to a base type)
+    var el, props, parent = type;
+    if (type.properties) {
+      props = type.properties;
+      parent = type.type;
+    }
+    el = new machines.El(parent, props);
     if (typeof arg === "number") {
       for (var n = 0; n < arg; n++) {
-        el.append(new machines.El('li'));
+        el.append(new machines.El(childType));
       }
     } else if (Array.isArray(arg)) {
-      var value;
+      var value, child;
       for (var item in arg) {
         if (typeof arg[item] === 'object') {
-          value = arg[item];
+          if (arg[item].type === 'ViewMachine') {
+            child = arg[item];
+          } else {
+           child = new machines.El(childType, arg[item]);
+          }
         } else {
-          value = {text: arg[item]};
+          child = new machines.El(childType, {text: arg[item]});
         }
-        el.append(new machines.El('li', value));
+        el.append(child);
       }
     }
     return el;
   };
-
+  machines.List = function (arg) {
+    //Construct html list object takes either a JS list of elements, or an object with parent properties for the UL, and a child property for the list
+    var parent = 'ul', children = arg;
+    if (arg.parent) {
+      parent = {type: 'ul', properties: arg.parent};
+      children = arg.children;
+    }
+    return machines.ParentEl(parent, 'li', children);
+  };
   machines.titles = {example: "Example"};
   machines.cleanTitles = function (title, replacement) {
   // Function to provide replacements for object keys used in templates, enables multi-language/clean titles for elements like tables, generated from JS objects
