@@ -103,6 +103,30 @@ ViewMachine = (function (machines) {
       //Sets up the parent child relationship of DOM element objects
       el.parent = this;
       this.children.push(el);
+      if (this.drawn) {
+        el.draw();
+      }
+      return this;
+    },
+    prepend: function (el) {
+      el.parent = this;
+      this.children = [el].concat(this.children);
+      if (this.drawn) {
+        this.draw();
+      }
+      return this;
+    },
+    splice: function (pos, n, el) {
+      if (el) {
+        el.parent = this;
+        this.children.splice(pos, n, el);
+      } else {
+        this.children.splice(pos, n);
+      }
+      
+      if (this.drawn) {
+        this.draw();
+      }
       return this;
     },
     parent: 'body'
