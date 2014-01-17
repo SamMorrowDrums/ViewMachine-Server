@@ -111,6 +111,7 @@ ViewMachine = (function (machines) {
     this.drawn = false;
     this.properties = properties;
     this.children = [];
+    this.style = {};
     return this;
   };
   machines.El.prototype = {
@@ -218,6 +219,25 @@ ViewMachine = (function (machines) {
       }
       
       if (this.drawn) {
+        this.draw();
+      }
+      return this;
+    },
+    css: function (prop, value) {
+      if (typeof prop === 'string') {
+        if (value === undefined) {
+          return style[value];
+        }
+        this.style[prop] = value;
+      } else {
+        this.style = prop;
+      }
+      var style = '';
+      for (var n in this.style) {
+        style += n + ': ' + this.style[n] + '; ';
+      }
+      this.properties.style = style;
+      if (this.drawn){
         this.draw();
       }
       return this;
