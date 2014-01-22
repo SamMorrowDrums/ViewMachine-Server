@@ -90,17 +90,16 @@ ViewMachine = (function (VM) {
 }
 if (jQuery === undefined) {
   console.log("Please add JS dependecy jQuery before loading this file.");
-} else {
-  var $ = jQuery;
 }
-ViewMachine = (function (machines) {
+
+ViewMachine = (function (VM, $) {
   'use strict';
   /*
     This is a library of HTML element auto-constructors, that put single element types, or groups of elements like an unsorted list (ul, li), in the DOM (where applicable, capable of introspection, for more complex data. Designed to be used by template systems
     Depends on jQuery
   */
   //New constructor function, to begin creating DOM element object constructors and prototypes
-  machines.El = function (element, properties) {
+  VM.El = function (element, properties) {
     this.element = element;
     if (properties === undefined) {
       properties = {};
@@ -114,7 +113,7 @@ ViewMachine = (function (machines) {
     this.style = {};
     return this;
   };
-  machines.El.prototype = {
+  VM.El.prototype = {
     getId: function () {
       //Basic function for getting unique IDs or set ones
       if (this.id) {
@@ -247,17 +246,17 @@ ViewMachine = (function (machines) {
   };
 
   //New version of the makeList, now a constructor for a list type
-  machines.ParentEl = function (type, childType, arg) {
+  VM.ParentEl = function (type, childType, arg) {
     //Construct html parent object (create lists, select boxes, or append a list of children to a base type)
     var el, props, parent = type;
     if (type.properties) {
       props = type.properties;
       parent = type.type;
     }
-    el = new machines.El(parent, props);
+    el = new VM.El(parent, props);
     if (typeof arg === "number") {
       for (var n = 0; n < arg; n++) {
-        el.append(new machines.El(childType));
+        el.append(new VM.El(childType));
       }
     } else if (Array.isArray(arg)) {
       var value, child;
@@ -266,36 +265,47 @@ ViewMachine = (function (machines) {
           if (arg[item].type === 'ViewMachine') {
             child = arg[item];
           } else {
-           child = new machines.El(childType, arg[item]);
+           child = new VM.El(childType, arg[item]);
           }
         } else {
-          child = new machines.El(childType, {text: arg[item]});
+          child = new VM.El(childType, {text: arg[item]});
         }
         el.append(child);
       }
     }
     return el;
   };
-  machines.List = function (arg) {
+  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
     var parent = 'ul', children = arg;
     if (arg.parent) {
       parent = {type: 'ul', properties: arg.parent};
       children = arg.children;
     }
-    return machines.ParentEl(parent, 'li', children);
+    return VM.ParentEl(parent, 'li', children);
   };
 
-  machines.Select = function (arg) {
+  VM.Select = function (arg) {
     //Construct html Select object takes either a number, JS list, or an object with 'parent' containing properties for the select, and a child property containing a list
     var parent = 'select', children = arg;
     if (arg.parent) {
       parent = {type: 'select', properties: arg.parent};
       children = arg.children;
     }
-    return machines.ParentEl(parent, 'option', children);
+    return VM.ParentEl(parent, 'option', children);
   };
-
+  return VM;
+}(ViewMachine, jQuery));;//This file is now obsolete, as the new version of ViewMachine is taking a different approach. The contents will be removed in future versions.
+if (ViewMachine === undefined) {
+  var ViewMachine = {};
+}
+if (jQuery === undefined) {
+  console.log("Please add JS dependecy jQuery before loading this file.");
+} else {
+  var $ = jQuery;
+}
+ViewMachine = (function (machines) {
+  'use strict';
   machines.titles = {example: "Example"};
   machines.cleanTitles = function (title, replacement) {
   // Function to provide replacements for object keys used in templates, enables multi-language/clean titles for elements like tables, generated from JS objects
