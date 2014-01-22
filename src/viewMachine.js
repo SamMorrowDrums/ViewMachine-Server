@@ -23,6 +23,7 @@ ViewMachine = (function (VM, $) {
     this.drawn = false;
     this.properties = properties;
     this.children = [];
+    this.events = {};
     this.style = {};
     return this;
   };
@@ -153,6 +154,9 @@ ViewMachine = (function (VM, $) {
         this.draw();
       }
       return this;
+    },
+    event: function (event, callback){
+      //Space for adding events that persist when elements are removed from the DOM
     },
     parent: 'body',
     type: 'ViewMachine'
