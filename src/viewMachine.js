@@ -12,6 +12,7 @@ ViewMachine = (function (VM, $) {
     Depends on jQuery
   */
   //New constructor function, to begin creating DOM element object constructors and prototypes
+  var events = [];
   VM.El = function (element, properties) {
     this.element = element;
     if (properties === undefined) {
@@ -23,7 +24,7 @@ ViewMachine = (function (VM, $) {
     this.drawn = false;
     this.properties = properties;
     this.children = [];
-    this.events = {};
+    this.events = [];
     this.style = {};
     return this;
   };
@@ -49,11 +50,15 @@ ViewMachine = (function (VM, $) {
       for (var child in this.children) {
         $(el).append(this.children[child].HTML(draw));
       }
-
+      for (var i in this.events) {
+        this.events[i].id = this.properties.id;
+        events.push(this.events[i]);
+      }
       return el;
     },
     draw: function () {
       //Draws element, including all children, on the DOM
+      events = [];
       if (this.drawn) {
         //If already on the DOM, just redraw
         this.replace(this.HTML(true));
@@ -70,6 +75,10 @@ ViewMachine = (function (VM, $) {
         } else {
           throw('DrawError: Parent element not on page');
         }
+      }
+      var n = events.length;
+      for (var i = 0; i < n; i++) {
+        $('#' + events[i].id).on(events[i].event, events[i].callback);
       }
       return this;
     },
@@ -156,7 +165,11 @@ ViewMachine = (function (VM, $) {
       return this;
     },
     event: function (event, callback){
-      //Space for adding events that persist when elements are removed from the DOM
+      //Method for adding events, that persist after a redraw
+      this.events.push({event: event, callback: callback});
+      if (this.drawn) {
+        $('#' + this.properties.id).on(event, callback);
+      }
     },
     parent: 'body',
     type: 'ViewMachine'
