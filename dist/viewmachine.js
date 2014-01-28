@@ -336,6 +336,36 @@ ViewMachine = (function (VM, $) {
     }
     table.append(header);
     table.append(body);
+    table.currentData = data;
+    table.keys = keys;
+    table.data = function (data){
+      var i = 0, temp, x;
+      for (var missingrow in this.currentData) {
+        if (data[missingrow] === undefined){
+          this.children[1].splice(i, 1);
+        } else {
+          i++;
+        }
+      }
+      i = 0;
+      for (var row in data) {
+        if (this.currentData[row] === undefined || (this.currentData[row] !== data[row])) {
+          x = 1;
+          temp = [];
+          rowdata = VM.getKeys(this.keys, data[row]);
+          for (n = 0; n < rows; n++) {
+            temp.push(rowdata[keys[n]]);
+          }
+          if (!this.currentData[row]){
+            x = 0;
+          }
+          this.children[1].splice(i, x, new VM.ParentEl('tr', 'td', temp));
+        }
+        i++;
+      }
+      this.currentData = data;
+      return this;
+    };
     return table;
   };
 
