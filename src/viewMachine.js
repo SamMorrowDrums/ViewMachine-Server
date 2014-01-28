@@ -231,5 +231,15 @@ ViewMachine = (function (VM, $) {
     }
     return VM.ParentEl(parent, 'option', children);
   };
+
+  VM.Table = function (keys, data){
+    var table = new VM.El('table');
+    var header = new VM.El('thead');
+    var body = new VM.El('tbody');
+    header.append(new VM.ParentEl('tr', 'th', keys));
+    table.append(header);
+    table.append(body);
+    return table;
+  };
   return VM;
 }(ViewMachine, jQuery));
