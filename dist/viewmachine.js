@@ -116,6 +116,13 @@ ViewMachine = (function (VM, $) {
     return this;
   };
   VM.El.prototype = {
+    text: function (text) {
+      this.properties.text = text;
+      if (this.drawn) {
+        this.draw();
+      }
+      return this;
+    },
     getId: function () {
       //Basic function for getting unique IDs or set ones
       if (this.id) {
