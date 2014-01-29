@@ -332,15 +332,11 @@ ViewMachine = (function (VM, $) {
     header.append(new VM.ParentEl('tr', 'th', keys));
     for (var row in data) {
       if (data.hasOwnProperty(row)){
-        temp = [];
+        temp = new VM.El('tr');
         for (var i = 0; i < rows; i++) {
-          if (data[row].hasOwnProperty(keys[i])) {
-            temp.push(data[row][keys[i]]);
-          } else {
-            temp.push(undefined);
-          }
+          temp.children.push(new VM.El('td', {text: data[row][keys[i]] } ) );
         }
-        body.children.push(new VM.ParentEl('tr', 'td', temp));
+        body.children.push(temp);
       }
     }
     table.children.push(header);
