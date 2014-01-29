@@ -132,6 +132,7 @@ ViewMachine = (function (VM, $) {
       return this;
     },
     prepend: function (el) {
+      //Add an element as the first child
       el.parent = this;
       this.children = [el].concat(this.children);
       if (this.drawn) {
@@ -140,6 +141,7 @@ ViewMachine = (function (VM, $) {
       return this;
     },
     splice: function (pos, n, el) {
+      //Treats an El, as if it's children are an array and can add in a new child element, uses the actal JS Splice method
       if (el) {
         el.parent = this;
         this.children.splice(pos, n, el);
@@ -153,6 +155,7 @@ ViewMachine = (function (VM, $) {
       return this;
     },
     css: function (prop, value) {
+      //Enables you to specifically set CSS for an element
       if (typeof prop === 'string') {
         if (value === undefined) {
           return style[value];
@@ -233,6 +236,7 @@ ViewMachine = (function (VM, $) {
   };
 
   VM.Table = function (keys, data){
+    //Constructs an HTML table El, binding to data, via an array key names, and an object/array with repeated keys
     var table = new VM.El('table');
     var header = new VM.El('thead');
     var body = new VM.El('tbody');
@@ -240,20 +244,26 @@ ViewMachine = (function (VM, $) {
     var temp, rowdata;
     header.append(new VM.ParentEl('tr', 'th', keys));
     for (var row in data) {
-      temp = [];
-      rowdata = VM.getKeys(keys, data[row]);
-      for (var n = 0; n < rows; n++) {
-        temp.push(rowdata[keys[n]]);
+      if (data.hasOwnProperty(row)){
+        temp = [];
+        for (var i = 0; i < rows; i++) {
+          if (data[row].hasOwnProperty(keys[i])) {
+            temp.push(data[row][keys[i]]);
+          } else {
+            temp.push(undefined);
+          }
+        }
+        body.children.push(new VM.ParentEl('tr', 'td', temp));
       }
-      body.append(new VM.ParentEl('tr', 'td', temp));
     }
-    table.append(header);
+    table.children.push(header);
     table.append(body);
     table.currentData = {};
     $.extend(table.currentData, data);
     table.keys = keys;
     table.data = function (data){
-      var i = 0, temp, x;
+      //Adds a data method, allowing you to update the data for the table automatically
+      var i = 0, temp;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           this.children[1].splice(i, 1);
@@ -263,23 +273,37 @@ ViewMachine = (function (VM, $) {
       }
       i = 0;
       for (var row in data) {
-        if (this.currentData[row] === undefined || (JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
-          x = 1;
+        if (data.hasOwnProperty(row)) {
+          if (!this.currentData.hasOwnProperty(row)) {
           temp = [];
-          rowdata = VM.getKeys(this.keys, data[row]);
-          for (n = 0; n < rows; n++) {
-            temp.push(rowdata[keys[n]]);
+          for (var n = 0; n < rows; n++) {
+            if (data[row].hasOwnProperty(keys[n])) {
+              temp.push(data[row][keys[n]]);
+            } else {
+              temp.push(undefined);
+            }
+            }
+            this.children[1].splice(i, 0, new VM.ParentEl('tr', 'td', temp));
+          } else if ((JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
+             //JSON Stringify is not the way to do this. Need to look at ways that I can tell what has changed
+            for (var x = 0; x < rows; x++) {
+              if (data[row].hasOwnProperty(keys[x])) {
+                if (data[row][keys[x]] !== this.currentData[row][keys[x]]){
+                  this.getCell(i, x).text(data[row][keys[x]]);
+                }
+              }
+            }
           }
-          if (!this.currentData[row]){
-            x = 0;
-          }
-          this.children[1].splice(i, x, new VM.ParentEl('tr', 'td', temp));
+          i++;
         }
-        i++;
       }
       this.currentData = {};
       $.extend(this.currentData, data);
       return this;
+    };
+    table.getCell = function (r, c){
+      //Simple way to get access to any cell
+      return this.children[1].children[r].children[c];
     };
     return table;
   };
