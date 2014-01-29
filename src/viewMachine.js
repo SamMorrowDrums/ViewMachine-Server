@@ -249,7 +249,8 @@ ViewMachine = (function (VM, $) {
     }
     table.append(header);
     table.append(body);
-    table.currentData = data;
+    table.currentData = {};
+    $.extend(table.currentData, data);
     table.keys = keys;
     table.data = function (data){
       var i = 0, temp, x;
@@ -262,7 +263,7 @@ ViewMachine = (function (VM, $) {
       }
       i = 0;
       for (var row in data) {
-        if (this.currentData[row] === undefined || (this.currentData[row] !== data[row])) {
+        if (this.currentData[row] === undefined || (JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
           x = 1;
           temp = [];
           rowdata = VM.getKeys(this.keys, data[row]);
@@ -276,7 +277,8 @@ ViewMachine = (function (VM, $) {
         }
         i++;
       }
-      this.currentData = data;
+      this.currentData = {};
+      $.extend(this.currentData, data);
       return this;
     };
     return table;
