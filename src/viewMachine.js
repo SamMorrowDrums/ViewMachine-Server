@@ -142,15 +142,26 @@ ViewMachine = (function (VM, $) {
     },
     splice: function (pos, n, el) {
       //Treats an El, as if it's children are an array and can add in a new child element, uses the actal JS Splice method
+      var removed;
       if (el) {
         el.parent = this;
-        this.children.splice(pos, n, el);
+        removed = this.children.splice(pos, n, el);
+        if (this.drawn) {
+          if (pos > 0) {
+            $('#' + this.children[pos -1].properties.id).after(el.HTML());
+          } else {
+            $('#' + this.properties.id).append(el.HTML());
+            el.drawn = true;
+          }
+        }
       } else {
-        this.children.splice(pos, n);
+        removed = this.children.splice(pos, n);
       }
-      
       if (this.drawn) {
-        this.draw();
+        var length = removed.length;
+        for (var i = 0; i < length; i++) {
+          removed[i].remove();
+        }
       }
       return this;
     },
@@ -241,13 +252,17 @@ ViewMachine = (function (VM, $) {
     var header = new VM.El('thead');
     var body = new VM.El('tbody');
     var rows = keys.length;
-    var temp, rowdata;
+    var temp, rowdata, text;
     header.append(new VM.ParentEl('tr', 'th', keys));
     for (var row in data) {
       if (data.hasOwnProperty(row)){
         temp = new VM.El('tr');
         for (var i = 0; i < rows; i++) {
-          temp.append(new VM.El('td', {text: data[row][keys[i]] } ) );
+          text = data[row][keys[i]];
+          if (Array.isArray(text)){
+            text = text.join(', ');
+          }
+          temp.append(new VM.El('td', {text: text } ) );
         }
         body.append(temp);
       }
@@ -271,15 +286,19 @@ ViewMachine = (function (VM, $) {
       for (var row in data) {
         if (data.hasOwnProperty(row)) {
           if (!this.currentData.hasOwnProperty(row)) {
-            temp = [];
+            temp = new VM.El('tr');
             for (var n = 0; n < rows; n++) {
               if (data[row].hasOwnProperty(keys[n])) {
-                temp.push(data[row][keys[n]]);
+                text = data[row][keys[n]];
+                if (Array.isArray(text)){
+                  text = text.join(', ');
+                }
+                temp.append(new VM.El('td', {text: text } ) );
               } else {
-                temp.push(undefined);
+                temp.append(new VM.El('td') );
               }
             }
-            this.children[1].splice(i, 0, new VM.ParentEl('tr', 'td', temp));
+            this.children[1].splice(i, 0, temp);
           } else if ((JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
              //JSON Stringify is not the way to do this. Need to look at ways that I can tell what has changed
             for (var x = 0; x < rows; x++) {
