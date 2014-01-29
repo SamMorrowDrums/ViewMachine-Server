@@ -271,13 +271,13 @@ ViewMachine = (function (VM, $) {
       for (var row in data) {
         if (data.hasOwnProperty(row)) {
           if (!this.currentData.hasOwnProperty(row)) {
-          temp = [];
-          for (var n = 0; n < rows; n++) {
-            if (data[row].hasOwnProperty(keys[n])) {
-              temp.push(data[row][keys[n]]);
-            } else {
-              temp.push(undefined);
-            }
+            temp = [];
+            for (var n = 0; n < rows; n++) {
+              if (data[row].hasOwnProperty(keys[n])) {
+                temp.push(data[row][keys[n]]);
+              } else {
+                temp.push(undefined);
+              }
             }
             this.children[1].splice(i, 0, new VM.ParentEl('tr', 'td', temp));
           } else if ((JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
