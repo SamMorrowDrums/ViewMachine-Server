@@ -334,9 +334,9 @@ ViewMachine = (function (VM, $) {
       if (data.hasOwnProperty(row)){
         temp = new VM.El('tr');
         for (var i = 0; i < rows; i++) {
-          temp.children.push(new VM.El('td', {text: data[row][keys[i]] } ) );
+          temp.append(new VM.El('td', {text: data[row][keys[i]] } ) );
         }
-        body.children.push(temp);
+        body.append(temp);
       }
     }
     table.children.push(header);
@@ -372,7 +372,7 @@ ViewMachine = (function (VM, $) {
             for (var x = 0; x < rows; x++) {
               if (data[row].hasOwnProperty(keys[x])) {
                 if (data[row][keys[x]] !== this.currentData[row][keys[x]]){
-                  this.getCell(i, x).text(data[row][keys[x]]);
+                  this.cell(i, x).text(data[row][keys[x]]);
                 }
               }
             }
@@ -384,7 +384,7 @@ ViewMachine = (function (VM, $) {
       $.extend(this.currentData, data);
       return this;
     };
-    table.getCell = function (r, c){
+    table.cell = function (r, c){
       //Simple way to get access to any cell
       return this.children[1].children[r].children[c];
     };
