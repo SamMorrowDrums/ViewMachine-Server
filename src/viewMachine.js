@@ -92,7 +92,6 @@ ViewMachine = (function (VM, $) {
     remove: function () {
       //Removes elements from their parents and from DOM if drawn
       if (this.drawn) {
-        console.log('here');
         $('#' + this.properties.id).remove();
         this.drawn = false;
       }
@@ -151,7 +150,6 @@ ViewMachine = (function (VM, $) {
           if (pos > 0) {
             $('#' + this.children[pos -1].properties.id).after(el.HTML());
             el.drawn = true;
-            console.log('here');
           } else {
             $('#' + this.properties.id).append(el.HTML());
             el.drawn = true;
