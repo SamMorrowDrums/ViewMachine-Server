@@ -301,6 +301,7 @@ ViewMachine = (function (VM, $) {
                 if (Array.isArray(text)){
                   text = text.join(', ');
                 }
+                console.log('here');
                 temp.append(new VM.El('td', {text: text } ) );
               } else {
                 temp.append(new VM.El('td') );
