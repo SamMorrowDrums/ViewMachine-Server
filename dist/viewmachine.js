@@ -245,6 +245,7 @@ ViewMachine = (function (VM, $) {
         removed = this.children.splice(pos, n);
       }
       if (this.drawn) {
+        console.log(removed);
         var length = removed.length;
         for (var i = 0; i < length; i++) {
           removed[i].remove();
@@ -361,13 +362,21 @@ ViewMachine = (function (VM, $) {
     table.keys = keys;
     table.data = function (data){
       //Adds a data method, allowing you to update the data for the table automatically
-      var i = 0, temp;
+      var i = 0, temp, v = 0;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
-          this.children[1].splice(i, 1);
+          v++;
         } else {
+          if (v > 0){
+            this.children[1].splice(i, v);
+            console.log(v);
+          }
           i++;
+          v = 0;
         }
+      }
+      if (v > 0){
+        this.children[1].splice(i, v);
       }
       i = 0;
       for (var row in data) {
