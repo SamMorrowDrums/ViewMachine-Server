@@ -247,14 +247,15 @@ ViewMachine = (function (VM, $) {
     return VM.ParentEl(parent, 'option', children);
   };
 
-  VM.Table = function (keys, data){
+  VM.Table = function (keys, data, headings){
     //Constructs an HTML table El, binding to data, via an array key names, and an object/array with repeated keys
     var table = new VM.El('table');
     var header = new VM.El('thead');
     var body = new VM.El('tbody');
     var rows = keys.length;
     var temp, rowdata, text;
-    header.append(new VM.ParentEl('tr', 'th', keys));
+    var theHeadings = headings || keys;
+    header.append(new VM.ParentEl('tr', 'th', theHeadings));
     for (var row in data) {
       if (data.hasOwnProperty(row)){
         temp = new VM.El('tr');
