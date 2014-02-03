@@ -420,7 +420,6 @@ ViewMachine = (function (VM, $) {
     return table;
   };
 
-
   //Functions
   VM.getKeys = function (keyList, obj) {
     //Pass in any object, and a list of keys, and you'll get back an object containing a list the keys, and their values (lists and objects can be "found", and you'll get a list of them as a string)
@@ -460,6 +459,19 @@ ViewMachine = (function (VM, $) {
     }
     return returnObj;
   };
+
+
+  VM.jsonTemplate = function (template) {
+    //Create, or parse JSON version of template
+    if (typeof template === 'string') {
+      var obj = JSON.parse(template);
+      //Need to run a template constructor on this.
+      return obj;
+    }
+    // Will iterate through and create a revivable format.
+    return JSON.stringify(template);
+  };
+
 
   return VM;
 }(ViewMachine, jQuery));;//This file is now obsolete, as the new version of ViewMachine is taking a different approach. The contents will be removed in future versions.
