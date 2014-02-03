@@ -460,15 +460,50 @@ ViewMachine = (function (VM, $) {
     return returnObj;
   };
 
+  VM.createTemplate = function (obj) {
+    //This will need work, but is the basis for template generation
+    var template = {};
+    if (typeof obj === 'object' && obj.type === 'ViewMachine') {
+      template.style = obj.style;
+      template.element = obj.element;
+      template.id = obj.id;
+      template.properties = {};
+      template.children = [];
+      for (var key in obj.properties) {
+        if (key !== 'id') {
+          template.properties[key] = obj.properties[key];
+        }
+      }
+      for (var child in obj.children) {
+        if (typeof obj === 'object' && obj.type === 'ViewMachine') {
+          template.children.push(VM.createTemplate(obj.children[child]));
+        }
+      }
+      return template;
+    }
+    return false;
+  };
+
+  VM.construct = function (template) {
+    var obj = new VM.El(template.element, template.properties);
+    for (var child in template.children) {
+      obj.append(VM.construct(template.children[child]));
+    }
+    obj.style = template.style;
+    obj.id = template.id;
+    return obj;
+  };
 
   VM.jsonTemplate = function (template) {
     //Create, or parse JSON version of template
     if (typeof template === 'string') {
       var obj = JSON.parse(template);
       //Need to run a template constructor on this.
-      return obj;
+      return VM.construct(obj);
     }
-    // Will iterate through and create a revivable format.
+    if (typeof template === 'object' && template.type === 'ViewMachine') {
+      template = VM.createTemplate(template);
+    }
     return JSON.stringify(template);
   };
 
