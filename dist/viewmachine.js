@@ -363,7 +363,7 @@ ViewMachine = (function (VM, $) {
     table.keys = keys;
     table.data = function (data){
       //Adds a data method, allowing you to update the data for the table automatically
-      var i = 0, temp, v = 0;
+      var i = 0, temp, v = 0, tempData = {};
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
@@ -382,6 +382,7 @@ ViewMachine = (function (VM, $) {
       i = 0;
       for (var row in data) {
         if (data.hasOwnProperty(row)) {
+          tempData[row] = data[row];
           if (!this.currentData.hasOwnProperty(row)) {
             temp = new VM.El('tr');
             for (var n = 0; n < rows; n++) {
@@ -409,8 +410,7 @@ ViewMachine = (function (VM, $) {
           i++;
         }
       }
-      this.currentData = {};
-      $.extend(this.currentData, data);
+      this.currentData = tempData;
       return this;
     };
     table.cell = function (r, c){
@@ -506,8 +506,6 @@ ViewMachine = (function (VM, $) {
     }
     return JSON.stringify(template);
   };
-
-
   return VM;
 }(ViewMachine, jQuery));;//This file is now obsolete, as the new version of ViewMachine is taking a different approach. The contents will be removed in future versions.
 if (ViewMachine === undefined) {
