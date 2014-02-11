@@ -182,7 +182,7 @@ ViewMachine = (function (VM, $) {
       }
       this.properties.style = style;
       if (this.drawn){
-        this.draw();
+        $('#' + this.properties.id).css(prop, value);
       }
       return this;
     },
