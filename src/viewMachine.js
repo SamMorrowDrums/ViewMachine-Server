@@ -299,8 +299,8 @@ ViewMachine = (function (VM, $) {
           if (!this.currentData.hasOwnProperty(row)) {
             temp = new VM.El('tr');
             for (var n = 0; n < rows; n++) {
-              if (data[row].hasOwnProperty(keys[n])) {
-                text = data[row][keys[n]];
+              if (data[row].hasOwnProperty(this.keys[n])) {
+                text = data[row][this.keys[n]];
                 if (Array.isArray(text)){
                   text = text.join(', ');
                 }
@@ -314,8 +314,8 @@ ViewMachine = (function (VM, $) {
              //JSON Stringify is not the way to do this. Need to look at ways that I can tell what has changed
             for (var x = 0; x < rows; x++) {
               if (data[row].hasOwnProperty(keys[x])) {
-                if (data[row][keys[x]] !== this.currentData[row][keys[x]]){
-                  this.cell(i, x).text(data[row][keys[x]]);
+                if (data[row][keys[x]] !== this.currentData[row][this.keys[x]]){
+                  this.cell(i, x).text(data[row][this.keys[x]]);
                 }
               }
             }
@@ -326,6 +326,18 @@ ViewMachine = (function (VM, $) {
       this.currentData = tempData;
       return this;
     };
+
+    table.headings = function (keys, headings) {
+      headings = headings || keys;
+      console.log(this.keys);
+      var tempData = {};
+      $.extend(tempData, this.currentData);
+      this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', headings));
+      this.data([]);
+      this.keys = keys;
+      this.data(tempData);
+    };
+
     table.cell = function (r, c){
       //Simple way to get access to any cell
       return this.children[1].children[r].children[c];
