@@ -297,6 +297,7 @@ ViewMachine = (function (VM, $) {
   };
 
   VM.construct = function (template) {
+    //Construct a ViewMachine template from a JS object
     var obj = new VM.El(template.element, template.properties);
     for (var child in template.children) {
       obj.append(VM.construct(template.children[child]));

@@ -105,6 +105,7 @@ ViewMachine = (function (VM, $) {
     };
 
     table.headings = function (keys, headings) {
+      //Change the rows / order of rows for a table, using the current data 
       headings = headings || keys;
       console.log(this.keys);
       var tempData = {};
@@ -113,6 +114,7 @@ ViewMachine = (function (VM, $) {
       this.data([]);
       this.keys = keys;
       this.data(tempData);
+      return this;
     };
 
     table.cell = function (r, c){
