@@ -3,6 +3,9 @@ if (ViewMachine === undefined) {
 }
 ViewMachine = (function (VM, $) {
   'use strict';
+  /*
+  This is the home of ViewMachine constructor functions for higher order HTML structures, such as Tables and Lists.
+  */
 
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
@@ -122,6 +125,14 @@ ViewMachine = (function (VM, $) {
       return this.children[1].children[r].children[c];
     };
     return table;
+  };
+
+  VM.Video = function (types, src, attrs) {
+    var video = new VM.El('video', attrs);
+    for (var type in types) {
+      video.append( new VM.El( 'source', {src: src + '.' + types[type], type: 'video/' + types[type]} ) );
+    }
+    return video;
   };
 
   return VM;

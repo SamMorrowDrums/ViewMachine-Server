@@ -384,6 +384,7 @@ ViewMachine = (function (VM, $) {
   };
 
   VM.construct = function (template) {
+    //Construct a ViewMachine template from a JS object
     var obj = new VM.El(template.element, template.properties);
     for (var child in template.children) {
       obj.append(VM.construct(template.children[child]));
@@ -697,6 +698,9 @@ ViewMachine = (function (machines) {
 }
 ViewMachine = (function (VM, $) {
   'use strict';
+  /*
+  This is the home of ViewMachine constructor functions for higher order HTML structures, such as Tables and Lists.
+  */
 
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
@@ -799,6 +803,7 @@ ViewMachine = (function (VM, $) {
     };
 
     table.headings = function (keys, headings) {
+      //Change the rows / order of rows for a table, using the current data 
       headings = headings || keys;
       console.log(this.keys);
       var tempData = {};
@@ -807,6 +812,7 @@ ViewMachine = (function (VM, $) {
       this.data([]);
       this.keys = keys;
       this.data(tempData);
+      return this;
     };
 
     table.cell = function (r, c){
@@ -814,6 +820,14 @@ ViewMachine = (function (VM, $) {
       return this.children[1].children[r].children[c];
     };
     return table;
+  };
+
+  VM.Video = function (types, src, attrs) {
+    var video = new VM.El('video', attrs);
+    for (var type in types) {
+      video.append( new VM.El( 'source', {src: src + '.' + types[type], type: 'video/' + types[type]} ) );
+    }
+    return video;
   };
 
   return VM;
