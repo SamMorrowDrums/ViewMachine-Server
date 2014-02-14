@@ -7,6 +7,9 @@ ViewMachine = (function (VM, $) {
   This is the home of ViewMachine constructor functions for higher order HTML structures, such as Tables and Lists.
   */
 
+  //When creating a constructor function, add your methods to the types object, so you can add the methods to an object, even without calling the constructor
+  VM.types = {};
+
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
     var parent = 'ul', children = arg;
@@ -54,7 +57,11 @@ ViewMachine = (function (VM, $) {
     table.currentData = {};
     $.extend(table.currentData, data);
     table.keys = keys;
-    table.data = function (data){
+    $.extend(table, VM.types.table);
+    return table;
+  };
+  VM.types.table = {
+    data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
       var i = 0, temp, v = 0, tempData = {};
       for (var missingrow in this.currentData) {
@@ -105,9 +112,8 @@ ViewMachine = (function (VM, $) {
       }
       this.currentData = tempData;
       return this;
-    };
-
-    table.headings = function (keys, headings) {
+    },
+    headings: function (keys, headings) {
       //Change the rows / order of rows for a table, using the current data 
       headings = headings || keys;
       console.log(this.keys);
@@ -118,13 +124,11 @@ ViewMachine = (function (VM, $) {
       this.keys = keys;
       this.data(tempData);
       return this;
-    };
-
-    table.cell = function (r, c){
+    },
+    cell: function (r, c){
       //Simple way to get access to any cell
       return this.children[1].children[r].children[c];
-    };
-    return table;
+    }
   };
 
   VM.Video = function (types, src, attrs) {

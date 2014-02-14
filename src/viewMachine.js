@@ -47,7 +47,7 @@ ViewMachine = (function (VM, $) {
       }
       return (Math.floor(Math.random()* 10000000 + 1)).toString();
     },
-    HTML: function (draw) {
+    html: function (draw) {
       //Returns HTML string of self and all child elements
       if (!this.drawn) {
         this.properties.id = this.getId();
@@ -57,9 +57,9 @@ ViewMachine = (function (VM, $) {
       }
 
       var el = $("<" + this.element + ">", this.properties);
-
+      el.css(this.style);
       for (var child in this.children) {
-        $(el).append(this.children[child].HTML(draw));
+        $(el).append(this.children[child].html(draw));
       }
       for (var i in this.events) {
         this.events[i].id = this.properties.id;
@@ -67,14 +67,20 @@ ViewMachine = (function (VM, $) {
       }
       return el;
     },
+    $: function () {
+      if (this.drawn){
+        return $('#' + this.properties.id);
+      }
+      return this.html();
+    },
     draw: function () {
       //Draws element, including all children, on the DOM
       events = [];
       if (this.drawn) {
         //If already on the DOM, just redraw
-        this.replace(this.HTML(true));
+        this.replace(this.html(true));
       } else {
-        var el = this.HTML(true);
+        var el = this.html(true);
         if (typeof this.parent === 'string') {
           //If parent is set as a jQuery identifier (default: body), then append to that element
           $(this.parent).append(el);
@@ -152,10 +158,10 @@ ViewMachine = (function (VM, $) {
         removed = this.children.splice(pos, n, el);
         if (this.drawn) {
           if (pos > 0) {
-            $('#' + this.children[pos -1].properties.id).after(el.HTML());
+            $('#' + this.children[pos -1].properties.id).after(el.html());
             el.drawn = true;
           } else {
-            $('#' + this.properties.id).append(el.HTML());
+            $('#' + this.properties.id).append(el.html());
             el.drawn = true;
           }
         }
@@ -174,19 +180,19 @@ ViewMachine = (function (VM, $) {
       //Enables you to specifically set CSS for an element
       if (typeof prop === 'string') {
         if (value === undefined) {
-          return style[value];
+          return this.style[value];
         }
         this.style[prop] = value;
+        if (this.drawn){
+          $('#' + this.properties.id).css(prop, value);
+        }
       } else {
-        this.style = prop;
-      }
-      var style = '';
-      for (var n in this.style) {
-        style += n + ': ' + this.style[n] + '; ';
-      }
-      this.properties.style = style;
-      if (this.drawn){
-        $('#' + this.properties.id).css(prop, value);
+        if (this.drawn){
+          $('#' + this.properties.id).css(prop);
+        }
+        for (var val in prop){
+          this.style[val] = prop[val];
+        }
       }
       return this;
     },
@@ -281,6 +287,10 @@ ViewMachine = (function (VM, $) {
       template.id = obj.id;
       template.properties = {};
       template.children = [];
+      if (template.element === 'table' && obj.currentData !== undefined) {
+        template.currentData = obj.currentData;
+        template.currentData = obj.keys;
+      }
       for (var key in obj.properties) {
         if (key !== 'id') {
           template.properties[key] = obj.properties[key];
@@ -304,6 +314,9 @@ ViewMachine = (function (VM, $) {
     }
     obj.style = template.style;
     obj.id = template.id;
+    if (VM.types[obj.element]) {
+      $.extend(obj, VM.types[obj.element]);
+    }
     return obj;
   };
 
