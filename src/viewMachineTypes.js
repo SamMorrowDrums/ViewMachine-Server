@@ -9,6 +9,8 @@ ViewMachine = (function (VM, $) {
 
   //When creating a constructor function, add your methods to the types object, so you can add the methods to an object, even without calling the constructor
   VM.types = {};
+  //Also register the poperties that need to be stored in order to use the above methods
+  VM.properties = {};
 
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
@@ -60,17 +62,18 @@ ViewMachine = (function (VM, $) {
     $.extend(table, VM.types.table);
     return table;
   };
+  VM.properties.table = ['currentData', 'keys'];
   VM.types.table = {
     data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
-      var i = 0, temp, v = 0, tempData = {};
+      var rows = this.keys.length;
+      var i = 0, temp, v = 0, tempData = {}, text;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
         } else {
           if (v > 0){
             this.children[1].splice(i, v);
-            console.log(v);
           }
           i++;
           v = 0;
@@ -116,7 +119,6 @@ ViewMachine = (function (VM, $) {
     headings: function (keys, headings) {
       //Change the rows / order of rows for a table, using the current data 
       headings = headings || keys;
-      console.log(this.keys);
       var tempData = {};
       $.extend(tempData, this.currentData);
       this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', headings));

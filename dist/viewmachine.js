@@ -374,9 +374,15 @@ ViewMachine = (function (VM, $) {
       template.id = obj.id;
       template.properties = {};
       template.children = [];
-      if (template.element === 'table' && obj.currentData !== undefined) {
-        template.currentData = obj.currentData;
-        template.currentData = obj.keys;
+      if (VM.properties[obj.element]) {
+        for (var prop in VM.properties[obj.element]) {
+          if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
+            template[VM.properties[obj.element][prop]] = {};
+            $.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
+          } else {
+            template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
+          }
+        }
       }
       for (var key in obj.properties) {
         if (key !== 'id') {
@@ -401,6 +407,16 @@ ViewMachine = (function (VM, $) {
     }
     obj.style = template.style;
     obj.id = template.id;
+    if (VM.properties[obj.element]) {
+        for (var prop in VM.properties[obj.element]) {
+          if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
+            obj[VM.properties[obj.element][prop]] = {};
+            $.extend(obj[VM.properties[obj.element][prop]], template[VM.properties[obj.element][prop]]);
+          } else {
+            obj[VM.properties[obj.element][prop]] = template[VM.properties[obj.element][prop]];
+          }
+        }
+      }
     if (VM.types[obj.element]) {
       $.extend(obj, VM.types[obj.element]);
     }
@@ -717,6 +733,8 @@ ViewMachine = (function (VM, $) {
 
   //When creating a constructor function, add your methods to the types object, so you can add the methods to an object, even without calling the constructor
   VM.types = {};
+  //Also register the poperties that need to be stored in order to use the above methods
+  VM.properties = {};
 
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
@@ -768,17 +786,18 @@ ViewMachine = (function (VM, $) {
     $.extend(table, VM.types.table);
     return table;
   };
+  VM.properties.table = ['currentData', 'keys'];
   VM.types.table = {
     data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
-      var i = 0, temp, v = 0, tempData = {};
+      var rows = this.keys.length;
+      var i = 0, temp, v = 0, tempData = {}, text;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
         } else {
           if (v > 0){
             this.children[1].splice(i, v);
-            console.log(v);
           }
           i++;
           v = 0;
@@ -824,7 +843,6 @@ ViewMachine = (function (VM, $) {
     headings: function (keys, headings) {
       //Change the rows / order of rows for a table, using the current data 
       headings = headings || keys;
-      console.log(this.keys);
       var tempData = {};
       $.extend(tempData, this.currentData);
       this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', headings));

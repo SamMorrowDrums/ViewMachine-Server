@@ -287,9 +287,15 @@ ViewMachine = (function (VM, $) {
       template.id = obj.id;
       template.properties = {};
       template.children = [];
-      if (template.element === 'table' && obj.currentData !== undefined) {
-        template.currentData = obj.currentData;
-        template.currentData = obj.keys;
+      if (VM.properties[obj.element]) {
+        for (var prop in VM.properties[obj.element]) {
+          if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
+            template[VM.properties[obj.element][prop]] = {};
+            $.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
+          } else {
+            template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
+          }
+        }
       }
       for (var key in obj.properties) {
         if (key !== 'id') {
@@ -314,6 +320,16 @@ ViewMachine = (function (VM, $) {
     }
     obj.style = template.style;
     obj.id = template.id;
+    if (VM.properties[obj.element]) {
+        for (var prop in VM.properties[obj.element]) {
+          if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
+            obj[VM.properties[obj.element][prop]] = {};
+            $.extend(obj[VM.properties[obj.element][prop]], template[VM.properties[obj.element][prop]]);
+          } else {
+            obj[VM.properties[obj.element][prop]] = template[VM.properties[obj.element][prop]];
+          }
+        }
+      }
     if (VM.types[obj.element]) {
       $.extend(obj, VM.types[obj.element]);
     }
