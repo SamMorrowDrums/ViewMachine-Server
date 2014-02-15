@@ -55,7 +55,6 @@ ViewMachine = (function (VM, $) {
       if (draw) {
         this.drawn = true;
       }
-
       var el = $("<" + this.element + ">", this.properties);
       el.css(this.style);
       for (var child in this.children) {
@@ -83,6 +82,7 @@ ViewMachine = (function (VM, $) {
         var el = this.html(true);
         if (typeof this.parent === 'string') {
           //If parent is set as a jQuery identifier (default: body), then append to that element
+          console.log('here');
           $(this.parent).append(el);
           this.drawn = true;
         } else if (this.parent.drawn === true) {
@@ -286,7 +286,7 @@ ViewMachine = (function (VM, $) {
       if (! $.isEmptyObject(obj.style)) {
         template.style = obj.style;
       }
-      if (obj.id) {
+      if (obj.id !== undefined) {
         template.id = obj.id;
       }
       if (! $.isEmptyObject(obj.properties)) {
@@ -299,18 +299,24 @@ ViewMachine = (function (VM, $) {
           }
        }
       }
-      if (obj.children.length) {
+      if (obj.children.length && (obj.preserve === undefined || obj.preserve === true)) {
         template.children = [];
         for (var child in obj.children) {
           if (typeof obj === 'object' && obj.type === 'ViewMachine') {
             template.children.push(VM.createTemplate(obj.children[child]));
           }
         }
+      } else {
+        template.preserve = false;
       }
       if (VM.properties[obj.element]) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
-            template[VM.properties[obj.element][prop]] = {};
+            if (Array.isArray(obj[VM.properties[obj.element][prop]])) {
+              template[VM.properties[obj.element][prop]] = [];
+            } else {
+              template[VM.properties[obj.element][prop]] = {};
+            }
             $.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
           } else {
             template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
@@ -324,13 +330,12 @@ ViewMachine = (function (VM, $) {
 
   VM.construct = function (template) {
     //Construct a ViewMachine template from a JS object
-    var obj = new VM.El(template.element, template.properties);
-    for (var child in template.children) {
-      obj.append(VM.construct(template.children[child]));
-    }
-    obj.style = template.style;
-    obj.id = template.id;
-    if (VM.properties[obj.element]) {
+    var obj;
+    if (template.preserve === false) {
+      obj = new VM[template.element.substring(0, 1).toUpperCase() + template.element.substring(1, template.element.length)](template[VM.properties[template.element][0]], template[VM.properties[template.element][1]], template[VM.properties[template.element][2]], template[VM.types[template.element][3]]);
+    } else {
+      obj = new VM.El(template.element, template.properties);
+      if (VM.properties[obj.element]) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
             obj[VM.properties[obj.element][prop]] = {};
@@ -340,8 +345,18 @@ ViewMachine = (function (VM, $) {
           }
         }
       }
-    if (VM.types[obj.element]) {
-      $.extend(obj, VM.types[obj.element]);
+      if (VM.types[obj.element]) {
+        $.extend(obj, VM.types[obj.element]);
+      }
+    }
+    for (var child in template.children) {
+      obj.append(VM.construct(template.children[child]));
+    }
+    if (template.style) {
+      obj.style = template.style;
+    }
+    if (obj.id !== undefined) {
+      obj.id = template.id;
     }
     return obj;
   };

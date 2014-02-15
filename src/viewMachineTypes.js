@@ -32,7 +32,7 @@ ViewMachine = (function (VM, $) {
     return VM.ParentEl(parent, 'option', children);
   };
 
-  VM.Table = function (keys, data, headings){
+  VM.Table = function (data, keys, headings){
     //Constructs an HTML table El, binding to data, via an array key names, and an object/array with repeated keys
     var table = new VM.El('table');
     var header = new VM.El('thead');
@@ -40,6 +40,7 @@ ViewMachine = (function (VM, $) {
     var rows = keys.length;
     var temp, rowdata, text;
     var theHeadings = headings || keys;
+    table.currentHeadings = theHeadings;
     header.append(new VM.ParentEl('tr', 'th', theHeadings));
     for (var row in data) {
       if (data.hasOwnProperty(row)){
@@ -57,12 +58,13 @@ ViewMachine = (function (VM, $) {
     table.children.push(header);
     table.append(body);
     table.currentData = {};
+    table.preserve = false;
     $.extend(table.currentData, data);
     table.keys = keys;
     $.extend(table, VM.types.table);
     return table;
   };
-  VM.properties.table = ['currentData', 'keys'];
+  VM.properties.table = ['currentData', 'keys', 'currentHeadings'];
   VM.types.table = {
     data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
@@ -118,10 +120,10 @@ ViewMachine = (function (VM, $) {
     },
     headings: function (keys, headings) {
       //Change the rows / order of rows for a table, using the current data 
-      headings = headings || keys;
+      this.currentHeadings = headings || keys;
       var tempData = {};
       $.extend(tempData, this.currentData);
-      this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', headings));
+      this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', this.currentHeadings));
       this.data([]);
       this.keys = keys;
       this.data(tempData);
