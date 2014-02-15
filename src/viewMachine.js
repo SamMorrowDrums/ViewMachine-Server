@@ -282,11 +282,31 @@ ViewMachine = (function (VM, $) {
     //This will need work, but is the basis for template generation
     var template = {};
     if (typeof obj === 'object' && obj.type === 'ViewMachine') {
-      template.style = obj.style;
       template.element = obj.element;
-      template.id = obj.id;
-      template.properties = {};
-      template.children = [];
+      if (! $.isEmptyObject(obj.style)) {
+        template.style = obj.style;
+      }
+      if (obj.id) {
+        template.id = obj.id;
+      }
+      if (! $.isEmptyObject(obj.properties)) {
+        for (var key in obj.properties) {
+          if (obj.properties[key] !== undefined) {
+            if (key !== 'id') {
+              template.properties = template.properties || {};
+              template.properties[key] = obj.properties[key];
+            }
+          }
+       }
+      }
+      if (obj.children.length) {
+        template.children = [];
+        for (var child in obj.children) {
+          if (typeof obj === 'object' && obj.type === 'ViewMachine') {
+            template.children.push(VM.createTemplate(obj.children[child]));
+          }
+        }
+      }
       if (VM.properties[obj.element]) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
@@ -295,16 +315,6 @@ ViewMachine = (function (VM, $) {
           } else {
             template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
           }
-        }
-      }
-      for (var key in obj.properties) {
-        if (key !== 'id') {
-          template.properties[key] = obj.properties[key];
-        }
-      }
-      for (var child in obj.children) {
-        if (typeof obj === 'object' && obj.type === 'ViewMachine') {
-          template.children.push(VM.createTemplate(obj.children[child]));
         }
       }
       return template;
