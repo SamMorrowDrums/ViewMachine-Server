@@ -82,7 +82,6 @@ ViewMachine = (function (VM, $) {
         var el = this.html(true);
         if (typeof this.parent === 'string') {
           //If parent is set as a jQuery identifier (default: body), then append to that element
-          console.log('here');
           $(this.parent).append(el);
           this.drawn = true;
         } else if (this.parent.drawn === true) {
@@ -94,8 +93,19 @@ ViewMachine = (function (VM, $) {
         }
       }
       var n = events.length;
+      var str;
+      function caller (id, event, callback){
+        $('#' + id).on(event, function (e) {
+          $(VM).trigger(callback, [e]);
+        });
+      }
       for (var i = 0; i < n; i++) {
-        $('#' + events[i].id).on(events[i].event, events[i].callback);
+        if (typeof events[i].callback === 'object') {
+          $('#' + events[i].id).on(events[i].event, events[i].callback);
+        }
+        else {
+          caller(events[i].id, events[i].event, events[i].callback);
+        }
       }
       return this;
     },
@@ -199,8 +209,16 @@ ViewMachine = (function (VM, $) {
     event: function (event, callback){
       //Method for adding events, that persist after a redraw
       this.events.push({event: event, callback: callback});
-      if (this.drawn) {
-        $('#' + this.properties.id).on(event, callback);
+      if (typeof callback === 'function') {
+        if (this.drawn) {
+          $('#' + this.properties.id).on(event, callback);
+        }
+      } else if (typeof callback === 'string') {
+        if (this.drawn) {
+          $('#' + this.properties.id).on(event, function (e){
+            $(VM).trigger(callback, [e]);
+          });
+        }
       }
     },
     parent: 'body',
@@ -306,7 +324,7 @@ ViewMachine = (function (VM, $) {
             template.children.push(VM.createTemplate(obj.children[child]));
           }
         }
-      } else {
+      } else if (obj.preserve === false){
         template.preserve = false;
       }
       if (VM.properties[obj.element]) {
@@ -320,6 +338,14 @@ ViewMachine = (function (VM, $) {
             $.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
           } else {
             template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
+          }
+        }
+      }
+      if (obj.events.length) {
+        template.events = [];
+        for (var i in obj.events) {
+          if (typeof obj.events[i].callback === 'string') {
+            template.events.push({event: obj.events[i].event, callback: obj.events[i].callback});
           }
         }
       }
@@ -355,8 +381,11 @@ ViewMachine = (function (VM, $) {
     if (template.style) {
       obj.style = template.style;
     }
-    if (obj.id !== undefined) {
+    if (template.id !== undefined) {
       obj.id = template.id;
+    }
+    if (template.events !== undefined) {
+      obj.events = template.events;
     }
     return obj;
   };
