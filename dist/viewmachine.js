@@ -144,8 +144,9 @@ ViewMachine = (function (VM, $) {
       }
       var el = $("<" + this.element + ">", this.properties);
       el.css(this.style);
-      for (var child in this.children) {
-        $(el).append(this.children[child].html(draw));
+      var len = this.children.length;
+      for (var n = 0; n < len; n++) {
+        $(el).append(this.children[n].html(draw));
       }
       for (var i in this.events) {
         this.events[i].id = this.properties.id;
@@ -329,7 +330,8 @@ ViewMachine = (function (VM, $) {
       }
     } else if (Array.isArray(arg)) {
       var value, child;
-      for (var item in arg) {
+      var len = arg.length;
+      for (var item = 0; item<len; item++) {
         if (typeof arg[item] === 'object') {
           if (arg[item].type === 'ViewMachine') {
             child = arg[item];
