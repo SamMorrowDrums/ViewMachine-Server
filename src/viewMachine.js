@@ -62,7 +62,8 @@ ViewMachine = (function (VM, $) {
       }
       for (var i in this.events) {
         this.events[i].id = this.properties.id;
-        events.push(this.events[i]);
+        events.push([this.events[i], this]);
+
       }
       return el;
     },
@@ -94,17 +95,17 @@ ViewMachine = (function (VM, $) {
       }
       var n = events.length;
       var str;
-      function caller (id, event, callback){
+      function caller (id, event, callback, element){
         $('#' + id).on(event, function (e) {
-          $(VM).trigger(callback, [e]);
+          $(VM).trigger(callback, [e, element]);
         });
       }
       for (var i = 0; i < n; i++) {
         if (typeof events[i].callback === 'object') {
-          $('#' + events[i].id).on(events[i].event, events[i].callback);
+          $('#' + events[i][0].id).on(events[i][0].event, events[i][0].callback);
         }
         else {
-          caller(events[i].id, events[i].event, events[i].callback);
+          caller(events[i][0].id, events[i][0].event, events[i][0].callback, events[i][1]);
         }
       }
       return this;
@@ -209,6 +210,7 @@ ViewMachine = (function (VM, $) {
     event: function (event, callback){
       //Method for adding events, that persist after a redraw
       this.events.push({event: event, callback: callback});
+      var that = this;
       if (typeof callback === 'function') {
         if (this.drawn) {
           $('#' + this.properties.id).on(event, callback);
@@ -216,7 +218,7 @@ ViewMachine = (function (VM, $) {
       } else if (typeof callback === 'string') {
         if (this.drawn) {
           $('#' + this.properties.id).on(event, function (e){
-            $(VM).trigger(callback, [e]);
+            $(VM).trigger(callback, [e, that]);
           });
         }
       }
