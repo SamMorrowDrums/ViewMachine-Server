@@ -121,7 +121,8 @@ ViewMachine = (function (VM, $) {
       if (typeof this.parent !== 'string') {
         this.getId();
         var children = this.parent.children;
-        for (var child in children) {
+        var len = children.length;
+        for (var child = 0; child < len; child++) {
           if (children[child].properties.id === this.properties.id) {
             this.parent.children.splice(child, 1);
           }

@@ -208,7 +208,8 @@ ViewMachine = (function (VM, $) {
       if (typeof this.parent !== 'string') {
         this.getId();
         var children = this.parent.children;
-        for (var child in children) {
+        var len = children.length;
+        for (var child = 0; child < len; child++) {
           if (children[child].properties.id === this.properties.id) {
             this.parent.children.splice(child, 1);
           }
@@ -923,6 +924,23 @@ ViewMachine = (function (VM, $) {
       video.append( new VM.El( 'source', {src: src + '.' + types[type], type: 'video/' + types[type]} ) );
     }
     return video;
+  };
+
+  VM.Image = function (src, preloadSrc, attrs) {
+    var img = new VM.El('img', {src: preloadSrc, 'data-img': src});
+    for (var attr in attrs) {
+      img.properties[attr] = attrs[attr];
+    }
+    console.log(img);
+    var source = new Image();
+    source.onload = function () {
+      img.properties.src = img.properties['data-img'];
+      if (img.drawn) {
+        img.draw();
+      }
+    };
+    source.src = src;
+    return img;
   };
 
   return VM;
