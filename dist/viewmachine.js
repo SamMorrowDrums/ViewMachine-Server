@@ -189,8 +189,8 @@ ViewMachine = (function (VM, $) {
         });
       }
       for (var i = 0; i < n; i++) {
-        if (typeof events[i].callback === 'object') {
-          $('#' + events[i][0].id).on(events[i][0].event, events[i][0].callback);
+        if (typeof events[i][0].callback === 'function') {
+          $('#' + events[i][0].id).on(events[i][0].event, events[i][1], events[i][0].callback);
         }
         else {
           caller(events[i][0].id, events[i][0].event, events[i][0].callback, events[i][1]);
@@ -302,7 +302,7 @@ ViewMachine = (function (VM, $) {
       var that = this;
       if (typeof callback === 'function') {
         if (this.drawn) {
-          $('#' + this.properties.id).on(event, callback);
+          $('#' + this.properties.id).on(event, this, callback);
         }
       } else if (typeof callback === 'string') {
         if (this.drawn) {
