@@ -365,7 +365,11 @@ ViewMachine = (function (VM, $) {
     if (template.preserve === false) {
       obj = new VM[template.element.substring(0, 1).toUpperCase() + template.element.substring(1, template.element.length)](template[VM.properties[template.element][0]], template[VM.properties[template.element][1]], template[VM.properties[template.element][2]], template[VM.types[template.element][3]]);
     } else {
-      obj = new VM.El(template.element, template.properties);
+      if (template.element === 'img' && typeof template.preload === 'string') {
+        obj = new VM.Image(template.src, template.preload);
+      } else {
+        obj = new VM.El(template.element, template.properties);
+      }
       if (VM.properties[obj.element]) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {

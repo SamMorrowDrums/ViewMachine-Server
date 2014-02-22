@@ -452,7 +452,11 @@ ViewMachine = (function (VM, $) {
     if (template.preserve === false) {
       obj = new VM[template.element.substring(0, 1).toUpperCase() + template.element.substring(1, template.element.length)](template[VM.properties[template.element][0]], template[VM.properties[template.element][1]], template[VM.properties[template.element][2]], template[VM.types[template.element][3]]);
     } else {
-      obj = new VM.El(template.element, template.properties);
+      if (template.element === 'img' && typeof template.preload === 'string') {
+        obj = new VM.Image(template.src, template.preload);
+      } else {
+        obj = new VM.El(template.element, template.properties);
+      }
       if (VM.properties[obj.element]) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
@@ -791,9 +795,9 @@ ViewMachine = (function (VM, $) {
   */
 
   //When creating a constructor function, add your methods to the types object, so you can add the methods to an object, even without calling the constructor
-  VM.types = {};
+  VM.types = VM.types || {};
   //Also register the poperties that need to be stored in order to use the above methods
-  VM.properties = {};
+  VM.properties = VM.properties || {};
 
  VM.List = function (arg) {
     //Construct html list object takes either a number, JS list, or an object with parent properties for the UL, and a child property containing a list
@@ -926,12 +930,14 @@ ViewMachine = (function (VM, $) {
     return video;
   };
 
+
   VM.Image = function (src, preloadSrc, attrs) {
     var img = new VM.El('img', {src: preloadSrc, 'data-img': src});
+    img.preload = preloadSrc;
+    img.src = src;
     for (var attr in attrs) {
       img.properties[attr] = attrs[attr];
     }
-    console.log(img);
     var source = new Image();
     source.onload = function () {
       img.properties.src = img.properties['data-img'];
@@ -942,6 +948,8 @@ ViewMachine = (function (VM, $) {
     source.src = src;
     return img;
   };
+
+  VM.properties.img = ['src', 'preload'];
 
   return VM;
 }(ViewMachine, jQuery));
