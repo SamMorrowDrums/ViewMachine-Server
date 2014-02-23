@@ -22,7 +22,39 @@ ViewMachine = (function (VM) {
     return out;
   };
 
-  
+  VM.event = {};
+
+  VM.on = function (event, callback, data) {
+    if (typeof event === 'string' && typeof callback === 'function') {
+      if (VM.event[event] ===  undefined) {
+        VM.event[event] = [];
+      }
+      VM.event[event].push([callback, data]);
+    } else {
+      throw('Type Error: expects, (string, function)');
+    }
+  };
+
+  VM.trigger = function (event, data) {
+    if (VM.event[event] !== undefined) {
+      var info = {
+        event: event,
+        timestamp: new Date().getTime()
+      };
+      for (var i = 0; i < VM.event[event].length; i++) {
+        if (VM.event[event][i].length === 2) {
+          info.data = VM.event[event][i][1];
+        }
+        VM.event[event][i][0](info, data);
+      }
+    }
+  };
+
+  VM.removeAllListeners = function (event) {
+    if (VM.event[event] !== undefined) {
+      delete VM.event[event];
+    }
+  };
 
   return VM;
 }(ViewMachine));;if (ViewMachine === undefined) {
