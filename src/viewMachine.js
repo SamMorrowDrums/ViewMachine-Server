@@ -1,14 +1,4 @@
-if (ViewMachine === undefined) {
-  var ViewMachine = {compatability: false};
-}
-if (jQuery === undefined) {
-  console.log("Please add JS dependecy jQuery before loading this file.");
-}
-
-if (!ViewMachine.compatability) {
-  var VM = ViewMachine;
-}
-
+var VM = ViewMachine;
 ViewMachine = (function (VM, doc) {
   'use strict';
   /*
