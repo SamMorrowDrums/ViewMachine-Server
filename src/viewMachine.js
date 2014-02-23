@@ -79,7 +79,7 @@ ViewMachine = (function (VM, doc) {
       events = [];
       if (this.drawn) {
         //If already on the DOM, just redraw
-        this.replace(this.html(true));
+        this.replace(this.html(true).outerHTML);
       } else {
         var el;
         if (typeof this.parent === 'string') {
