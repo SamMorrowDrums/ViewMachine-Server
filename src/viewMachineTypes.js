@@ -59,9 +59,9 @@ ViewMachine = (function (VM, $) {
     table.append(body);
     table.currentData = {};
     table.preserve = false;
-    $.extend(table.currentData, data);
+    VM.extend(table.currentData, data);
     table.keys = keys;
-    $.extend(table, VM.types.table);
+    VM.extend(table, VM.types.table);
     return table;
   };
   VM.properties.table = ['currentData', 'keys', 'currentHeadings'];
@@ -122,7 +122,7 @@ ViewMachine = (function (VM, $) {
       //Change the rows / order of rows for a table, using the current data 
       this.currentHeadings = headings || keys;
       var tempData = {};
-      $.extend(tempData, this.currentData);
+      VM.extend(tempData, this.currentData);
       this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', this.currentHeadings));
       this.data([]);
       this.keys = keys;

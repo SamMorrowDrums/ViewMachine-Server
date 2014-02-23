@@ -340,7 +340,7 @@ ViewMachine = (function (VM, $) {
             } else {
               template[VM.properties[obj.element][prop]] = {};
             }
-            $.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
+            VM.extend(template[VM.properties[obj.element][prop]], obj[VM.properties[obj.element][prop]]);
           } else {
             template[VM.properties[obj.element][prop]] = obj[VM.properties[obj.element][prop]];
           }
@@ -374,14 +374,14 @@ ViewMachine = (function (VM, $) {
         for (var prop in VM.properties[obj.element]) {
           if (typeof obj[VM.properties[obj.element][prop]] === 'object') {
             obj[VM.properties[obj.element][prop]] = {};
-            $.extend(obj[VM.properties[obj.element][prop]], template[VM.properties[obj.element][prop]]);
+            VM.extend(obj[VM.properties[obj.element][prop]], template[VM.properties[obj.element][prop]]);
           } else {
             obj[VM.properties[obj.element][prop]] = template[VM.properties[obj.element][prop]];
           }
         }
       }
       if (VM.types[obj.element]) {
-        $.extend(obj, VM.types[obj.element]);
+        VM.extend(obj, VM.types[obj.element]);
       }
     }
     for (var child in template.children) {
