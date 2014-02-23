@@ -1,7 +1,7 @@
 if (ViewMachine === undefined) {
   var ViewMachine = {};
 }
-ViewMachine = (function (VM, $) {
+ViewMachine = (function (VM, h) {
   'use strict';
   /*
   This is the home of ViewMachine constructor functions for higher order HTML structures, such as Tables and Lists.
@@ -43,7 +43,7 @@ ViewMachine = (function (VM, $) {
     table.currentHeadings = theHeadings;
     header.append(new VM.ParentEl('tr', 'th', theHeadings));
     for (var row in data) {
-      if (data.hasOwnProperty(row)){
+      if (h.call(data, row)){
         temp = new VM.El('tr');
         for (var i = 0; i < rows; i++) {
           text = data[row][keys[i]];
@@ -92,12 +92,12 @@ ViewMachine = (function (VM, $) {
       }
       i = 0;
       for (var row in data) {
-        if (data.hasOwnProperty(row)) {
+        if (h.call(data, row)) {
           tempData[row] = data[row];
-          if (!this.currentData.hasOwnProperty(row)) {
+          if (! h.call(this.currentData, row)) {
             temp = new VM.El('tr');
             for (var n = 0; n < rows; n++) {
-              if (data[row].hasOwnProperty(this.keys[n])) {
+              if (h.call(data[row], this.keys[n])) {
                 text = data[row][this.keys[n]];
                 if (Array.isArray(text)){
                   text = text.join(', ');
@@ -111,7 +111,7 @@ ViewMachine = (function (VM, $) {
           } else if ((JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
              //JSON Stringify is not the way to do this. Need to look at ways that I can tell what has changed
             for (var x = 0; x < rows; x++) {
-              if (data[row].hasOwnProperty(keys[x])) {
+              if (h.call(data[row], keys[x])) {
                 if (data[row][keys[x]] !== this.currentData[row][this.keys[x]]){
                   this.cell(i, x).text(data[row][this.keys[x]]);
                 }
@@ -171,4 +171,4 @@ ViewMachine = (function (VM, $) {
   VM.properties.img = ['src', 'preload'];
 
   return VM;
-}(ViewMachine, jQuery));
+}(ViewMachine, Object.prototype.hasOwnProperty));

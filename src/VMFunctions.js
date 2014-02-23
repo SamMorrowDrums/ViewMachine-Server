@@ -74,13 +74,17 @@ ViewMachine = (function (VM) {
       delete VM.event[event];
     }
   };
+  var h = Object.prototype.hasOwnProperty;
+  VM.isEmpty = function (obj) {
+    if (obj == null) return true;
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    // toString and valueOf enumeration bugs in IE < 9
+    for (var key in obj) {
+        if (h.call(obj, key)) return false;
+    }
 
-  /*
-  To Do:
-
-  Finish the event callback, for single events so they get the ViewMachine Object, not the Dom Object.
-
-  */
-
+    return true;
+  };
   return VM;
 }(ViewMachine));
