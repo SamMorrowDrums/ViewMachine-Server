@@ -445,46 +445,6 @@ ViewMachine = (function (VM, $) {
     return el;
   };
 
-  //Functions
-  VM.getKeys = function (keyList, obj) {
-    //Pass in any object, and a list of keys, and you'll get back an object containing a list the keys, and their values (lists and objects can be "found", and you'll get a list of them as a string)
-    //only used for individaul Objects, so you might iterate through a list of users, as an example, and send this funcion keys to find, then process the response for each user...
-    var returnObj = {}, items, key, subKey, returned;
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        if (Object.prototype.toString.call(obj[key]) !== '[object Array]' && keyList.indexOf(key) !== -1) {
-          if (typeof obj[key] === "object") {
-            items = [];
-            for (subKey in obj[key]) {
-              if (obj[key].hasOwnProperty(subKey)) {
-                items.push(subKey);
-              }
-            }
-            returnObj[key] = items.join(", ");
-            returned = VM.getKeys(keyList, obj[key]);
-            for (subKey in returned) {
-              if (returned.hasOwnProperty(subKey)) {
-                returnObj[subKey] = returned[subKey];
-              }
-            }
-          } else {
-            returnObj[key] = obj[key];
-          }
-        } else if (obj.hasOwnProperty(key) && Object.prototype.toString.call(obj[key]) === '[object Array]') {
-          returnObj[key] = obj[key].join(", ");
-        } else if (typeof obj[key] === "object") {
-          returned = VM.getKeys(keyList, obj[key]);
-          for (subKey in returned) {
-            if (returned.hasOwnProperty(subKey)) {
-              returnObj[subKey] = returned[subKey];
-            }
-          }
-        }
-      }
-    }
-    return returnObj;
-  };
-
   VM.createTemplate = function (obj) {
     //This will need work, but is the basis for template generation
     var template = {};
