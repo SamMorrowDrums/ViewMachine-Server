@@ -22,6 +22,8 @@ ViewMachine = (function (VM) {
     return out;
   };
 
+  
+
   return VM;
 }(ViewMachine));;if (ViewMachine === undefined) {
   var ViewMachine = {};
