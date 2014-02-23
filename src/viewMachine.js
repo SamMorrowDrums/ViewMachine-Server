@@ -197,14 +197,14 @@ ViewMachine = (function (VM, $) {
         }
         this.style[prop] = value;
         if (this.drawn){
-          $('#' + this.properties.id).css(prop, value);
+          document.getElementById(this.properties.id).style[prop] = value;
         }
       } else {
-        if (this.drawn){
-          $('#' + this.properties.id).css(prop);
-        }
         for (var val in prop){
           this.style[val] = prop[val];
+          if (this.drawn) {
+            document.getElementById(this.properties.id).style[val] = prop[val];
+          }
         }
       }
       return this;
