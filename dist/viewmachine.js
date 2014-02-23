@@ -24,6 +24,14 @@ ViewMachine = (function (VM) {
 
   VM.event = {};
 
+  VM.addEventListener = function (el, eventName, handler) {
+    if (el.addEventListener) {
+      el.addEventListener(eventName, handler);
+    } else {
+      el.attachEvent('on' + eventName, handler);
+    }
+  };
+
   VM.on = function (event, callback, data) {
     if (typeof event === 'string' && typeof callback === 'function') {
       if (VM.event[event] ===  undefined) {
@@ -55,6 +63,13 @@ ViewMachine = (function (VM) {
       delete VM.event[event];
     }
   };
+
+  /*
+  To Do:
+
+  Finish the event callback, for single events so they get the ViewMachine Object, not the Dom Object.
+
+  */
 
   return VM;
 }(ViewMachine));;if (ViewMachine === undefined) {
@@ -216,7 +231,7 @@ ViewMachine = (function (VM, $) {
     },
     $: function () {
       if (this.drawn){
-        return $('#' + this.properties.id);
+        return document.getElementById(this.properties.id);
       }
       return this.html();
     },
@@ -358,15 +373,15 @@ ViewMachine = (function (VM, $) {
     event: function (event, callback){
       //Method for adding events, that persist after a redraw
       this.events.push({event: event, callback: callback});
-      var that = this;
       if (typeof callback === 'function') {
         if (this.drawn) {
-          $('#' + this.properties.id).on(event, this, callback);
+          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
         }
       } else if (typeof callback === 'string') {
         if (this.drawn) {
-          $('#' + this.properties.id).on(event, function (e){
-            $(VM).trigger(callback, [e, that]);
+          var that = this;
+          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
+            VM.trigger(callback, that);
           });
         }
       }

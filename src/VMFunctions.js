@@ -32,8 +32,6 @@ ViewMachine = (function (VM) {
     }
   };
 
-addEventListener(el, eventName, handler);
-
   VM.on = function (event, callback, data) {
     if (typeof event === 'string' && typeof callback === 'function') {
       if (VM.event[event] ===  undefined) {
@@ -65,6 +63,13 @@ addEventListener(el, eventName, handler);
       delete VM.event[event];
     }
   };
+
+  /*
+  To Do:
+
+  Finish the event callback, for single events so they get the ViewMachine Object, not the Dom Object.
+
+  */
 
   return VM;
 }(ViewMachine));

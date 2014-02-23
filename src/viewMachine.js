@@ -70,7 +70,7 @@ ViewMachine = (function (VM, $) {
     },
     $: function () {
       if (this.drawn){
-        return $('#' + this.properties.id);
+        return document.getElementById(this.properties.id);
       }
       return this.html();
     },
@@ -218,8 +218,9 @@ ViewMachine = (function (VM, $) {
         }
       } else if (typeof callback === 'string') {
         if (this.drawn) {
+          var that = this;
           VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
-            VM.trigger(callback, this);
+            VM.trigger(callback, that);
           });
         }
       }
