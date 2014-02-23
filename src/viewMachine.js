@@ -212,15 +212,14 @@ ViewMachine = (function (VM, $) {
     event: function (event, callback){
       //Method for adding events, that persist after a redraw
       this.events.push({event: event, callback: callback});
-      var that = this;
       if (typeof callback === 'function') {
         if (this.drawn) {
-          $('#' + this.properties.id).on(event, this, callback);
+          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
         }
       } else if (typeof callback === 'string') {
         if (this.drawn) {
-          $('#' + this.properties.id).on(event, function (e){
-            $(VM).trigger(callback, [e, that]);
+          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
+            VM.trigger(callback, this);
           });
         }
       }
