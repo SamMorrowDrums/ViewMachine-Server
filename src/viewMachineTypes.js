@@ -57,11 +57,11 @@ ViewMachine = (function (VM, $) {
     }
     table.children.push(header);
     table.append(body);
-    table.currentData = {};
     table.preserve = false;
-    VM.extend(table.currentData, data);
     table.keys = keys;
     VM.extend(table, VM.types.table);
+    table.currentData = {};
+    table.currentData = VM.extend(table.currentData, data);
     return table;
   };
   VM.properties.table = ['currentData', 'keys', 'currentHeadings'];
@@ -69,7 +69,13 @@ ViewMachine = (function (VM, $) {
     data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
       var rows = this.keys.length;
-      var i = 0, temp, v = 0, tempData = {}, text;
+      var tempData;
+      if (Array.isArray(data)) {
+        tempData = [];
+      } else {
+        tempData = {};
+      }
+      var i = 0, temp, v = 0, text;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
@@ -122,7 +128,7 @@ ViewMachine = (function (VM, $) {
       //Change the rows / order of rows for a table, using the current data 
       this.currentHeadings = headings || keys;
       var tempData = {};
-      VM.extend(tempData, this.currentData);
+      tempData = VM.extend(tempData, this.currentData);
       this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', this.currentHeadings));
       this.data([]);
       this.keys = keys;

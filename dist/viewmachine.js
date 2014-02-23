@@ -10,6 +10,17 @@ ViewMachine = (function (VM) {
       var obj = arguments[i];
       if (!obj)
         continue;
+      if (Array.isArray(obj)){
+        out = [];
+        for (var n = 0; n < obj.length; n++) {
+          if (typeof obj[n] === 'object') {
+            out.push({});
+            VM.extend(out[i], obj[i]);
+          } else {
+            out.push(obj[i]);
+          }
+        }
+      }
       for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
           if (typeof obj[key] === 'object')
@@ -216,16 +227,26 @@ ViewMachine = (function (VM, $) {
       if (draw) {
         this.drawn = true;
       }
-      var el = $("<" + this.element + ">", this.properties);
-      el.css(this.style);
+      var el = document.createElement(this.element);
+      for (var prop in this.properties) {
+        if (prop === 'text') {
+          el.innerHTML = this.properties[prop];
+        } else if (prop === 'id' ){
+            el.id = this.properties[prop];
+        } else {
+          el.setAttribute(prop, this.properties[prop]);
+        }
+      }
+      for (var css in this.style) {
+        el.style[css] = this.style[css];
+      }
       var len = this.children.length;
       for (var n = 0; n < len; n++) {
-        $(el).append(this.children[n].html(draw));
+        el.appendChild(this.children[n].html(draw));
       }
       for (var i in this.events) {
         this.events[i].id = this.properties.id;
         events.push([this.events[i], this]);
-
       }
       return el;
     },
@@ -242,14 +263,16 @@ ViewMachine = (function (VM, $) {
         //If already on the DOM, just redraw
         this.replace(this.html(true));
       } else {
-        var el = this.html(true);
+        var el;
         if (typeof this.parent === 'string') {
           //If parent is set as a jQuery identifier (default: body), then append to that element
-          $(this.parent).append(el);
+          el = document.getElementsByTagName(this.parent)[0];
+          el.innerHTML = this.html(true).outerHTML;
           this.drawn = true;
         } else if (this.parent.drawn === true) {
           //If parent is a ViewMachine object, append self to the parent
-          $('#' + this.parent.properties.id).append(el);
+          el = document.getElementById(this.parent.properties.id);
+          el.appendChild(this.html(true));
           this.drawn = true;
         } else {
           throw('DrawError: Parent element not on page');
@@ -258,19 +281,35 @@ ViewMachine = (function (VM, $) {
       var n = events.length;
       var str;
       function caller (id, event, callback, element){
-        $('#' + id).on(event, function (e) {
-          $(VM).trigger(callback, [e, element]);
+        VM.addEventListener(document.getElementById(id), event, function (e) {
+          VM.trigger(callback, element);
         });
       }
       for (var i = 0; i < n; i++) {
         if (typeof events[i][0].callback === 'function') {
-          $('#' + events[i][0].id).on(events[i][0].event, events[i][1], events[i][0].callback);
+          VM.addEventListener(document.getElementById(events[i][0].id), events[i][0].event, events[i][0].callback);
         }
         else {
           caller(events[i][0].id, events[i][0].event, events[i][0].callback, events[i][1]);
         }
       }
       return this;
+    },
+    event: function (event, callback){
+      //Method for adding events, that persist after a redraw
+      this.events.push({event: event, callback: callback});
+      if (typeof callback === 'function') {
+        if (this.drawn) {
+          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
+        }
+      } else if (typeof callback === 'string') {
+        if (this.drawn) {
+          var that = this;
+          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
+            VM.trigger(callback, that);
+          });
+        }
+      }
     },
     remove: function () {
       //Removes elements from their parents and from DOM if drawn
@@ -369,22 +408,6 @@ ViewMachine = (function (VM, $) {
         }
       }
       return this;
-    },
-    event: function (event, callback){
-      //Method for adding events, that persist after a redraw
-      this.events.push({event: event, callback: callback});
-      if (typeof callback === 'function') {
-        if (this.drawn) {
-          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
-        }
-      } else if (typeof callback === 'string') {
-        if (this.drawn) {
-          var that = this;
-          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
-            VM.trigger(callback, that);
-          });
-        }
-      }
     },
     parent: 'body',
     type: 'ViewMachine'
@@ -632,11 +655,11 @@ ViewMachine = (function (VM, $) {
     }
     table.children.push(header);
     table.append(body);
-    table.currentData = {};
     table.preserve = false;
-    VM.extend(table.currentData, data);
     table.keys = keys;
     VM.extend(table, VM.types.table);
+    table.currentData = {};
+    table.currentData = VM.extend(table.currentData, data);
     return table;
   };
   VM.properties.table = ['currentData', 'keys', 'currentHeadings'];
@@ -644,7 +667,13 @@ ViewMachine = (function (VM, $) {
     data: function (data){
       //Adds a data method, allowing you to update the data for the table automatically
       var rows = this.keys.length;
-      var i = 0, temp, v = 0, tempData = {}, text;
+      var tempData;
+      if (Array.isArray(data)) {
+        tempData = [];
+      } else {
+        tempData = {};
+      }
+      var i = 0, temp, v = 0, text;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
@@ -697,7 +726,7 @@ ViewMachine = (function (VM, $) {
       //Change the rows / order of rows for a table, using the current data 
       this.currentHeadings = headings || keys;
       var tempData = {};
-      VM.extend(tempData, this.currentData);
+      tempData = VM.extend(tempData, this.currentData);
       this.children[0].splice(0, 1, new VM.ParentEl('tr', 'th', this.currentHeadings));
       this.data([]);
       this.keys = keys;

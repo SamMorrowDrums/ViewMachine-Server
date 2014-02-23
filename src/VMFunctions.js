@@ -10,6 +10,17 @@ ViewMachine = (function (VM) {
       var obj = arguments[i];
       if (!obj)
         continue;
+      if (Array.isArray(obj)){
+        out = [];
+        for (var n = 0; n < obj.length; n++) {
+          if (typeof obj[n] === 'object') {
+            out.push({});
+            VM.extend(out[i], obj[i]);
+          } else {
+            out.push(obj[i]);
+          }
+        }
+      }
       for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
           if (typeof obj[key] === 'object')

@@ -55,16 +55,26 @@ ViewMachine = (function (VM, $) {
       if (draw) {
         this.drawn = true;
       }
-      var el = $("<" + this.element + ">", this.properties);
-      el.css(this.style);
+      var el = document.createElement(this.element);
+      for (var prop in this.properties) {
+        if (prop === 'text') {
+          el.innerHTML = this.properties[prop];
+        } else if (prop === 'id' ){
+            el.id = this.properties[prop];
+        } else {
+          el.setAttribute(prop, this.properties[prop]);
+        }
+      }
+      for (var css in this.style) {
+        el.style[css] = this.style[css];
+      }
       var len = this.children.length;
       for (var n = 0; n < len; n++) {
-        $(el).append(this.children[n].html(draw));
+        el.appendChild(this.children[n].html(draw));
       }
       for (var i in this.events) {
         this.events[i].id = this.properties.id;
         events.push([this.events[i], this]);
-
       }
       return el;
     },
@@ -81,14 +91,16 @@ ViewMachine = (function (VM, $) {
         //If already on the DOM, just redraw
         this.replace(this.html(true));
       } else {
-        var el = this.html(true);
+        var el;
         if (typeof this.parent === 'string') {
           //If parent is set as a jQuery identifier (default: body), then append to that element
-          $(this.parent).append(el);
+          el = document.getElementsByTagName(this.parent)[0];
+          el.innerHTML = this.html(true).outerHTML;
           this.drawn = true;
         } else if (this.parent.drawn === true) {
           //If parent is a ViewMachine object, append self to the parent
-          $('#' + this.parent.properties.id).append(el);
+          el = document.getElementById(this.parent.properties.id);
+          el.appendChild(this.html(true));
           this.drawn = true;
         } else {
           throw('DrawError: Parent element not on page');
@@ -97,19 +109,35 @@ ViewMachine = (function (VM, $) {
       var n = events.length;
       var str;
       function caller (id, event, callback, element){
-        $('#' + id).on(event, function (e) {
-          $(VM).trigger(callback, [e, element]);
+        VM.addEventListener(document.getElementById(id), event, function (e) {
+          VM.trigger(callback, element);
         });
       }
       for (var i = 0; i < n; i++) {
         if (typeof events[i][0].callback === 'function') {
-          $('#' + events[i][0].id).on(events[i][0].event, events[i][1], events[i][0].callback);
+          VM.addEventListener(document.getElementById(events[i][0].id), events[i][0].event, events[i][0].callback);
         }
         else {
           caller(events[i][0].id, events[i][0].event, events[i][0].callback, events[i][1]);
         }
       }
       return this;
+    },
+    event: function (event, callback){
+      //Method for adding events, that persist after a redraw
+      this.events.push({event: event, callback: callback});
+      if (typeof callback === 'function') {
+        if (this.drawn) {
+          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
+        }
+      } else if (typeof callback === 'string') {
+        if (this.drawn) {
+          var that = this;
+          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
+            VM.trigger(callback, that);
+          });
+        }
+      }
     },
     remove: function () {
       //Removes elements from their parents and from DOM if drawn
@@ -208,22 +236,6 @@ ViewMachine = (function (VM, $) {
         }
       }
       return this;
-    },
-    event: function (event, callback){
-      //Method for adding events, that persist after a redraw
-      this.events.push({event: event, callback: callback});
-      if (typeof callback === 'function') {
-        if (this.drawn) {
-          VM.addEventListener(document.getElementById(this.properties.id), event, callback);
-        }
-      } else if (typeof callback === 'string') {
-        if (this.drawn) {
-          var that = this;
-          VM.addEventListener(document.getElementById(this.properties.id), event, function (e){
-            VM.trigger(callback, that);
-          });
-        }
-      }
     },
     parent: 'body',
     type: 'ViewMachine'
