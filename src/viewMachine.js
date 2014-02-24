@@ -246,7 +246,7 @@ ViewMachine = (function (VM, doc) {
       if (typeof prop === 'string') {
         if (value === undefined) {
           if (this.drawn){
-            return doc.getElementById(this.properties.id).style[prop];
+            return getComputedStyle(doc.getElementById(this.properties.id))[prop];
           } else {
             return this.style[prop];
           }
