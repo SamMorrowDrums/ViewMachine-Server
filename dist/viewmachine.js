@@ -422,9 +422,9 @@ ViewMachine = (function (VM, doc) {
       if (typeof prop === 'string') {
         if (value === undefined) {
           if (this.drawn){
-            return getComputedStyle(doc.getElementById(this.properties.id))[prop];
+            return window.getComputedStyle(doc.getElementById(this.properties.id))[prop];
           } else {
-            return this.style[prop];
+            return this.style[prop] || '';
           }
         }
         this.style[prop] = value;
