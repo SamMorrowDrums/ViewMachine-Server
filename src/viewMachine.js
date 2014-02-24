@@ -131,6 +131,7 @@ ViewMachine = (function (VM, doc) {
           });
         }
       }
+      return this;
     },
     remove: function () {
       //Removes elements from their parents and from DOM if drawn
@@ -208,6 +209,34 @@ ViewMachine = (function (VM, doc) {
         var length = removed.length;
         for (var i = 0; i < length; i++) {
           removed[i].remove();
+        }
+      }
+      return this;
+    },
+    addClass: function (cl) {
+      var classes;
+      if (!this.properties.class) {
+        classes = [];
+      } else {
+        classes = this.properties.class.split(' ');
+      }
+      if (classes.indexOf(cl) === -1) {
+        classes.push(cl);
+        this.properties.class = classes.join(' ');
+        if (this.drawn) {
+          doc.getElementById(this.properties.id).setAttribute('class', this.properties.class);
+        }
+      }
+      return this;
+    },
+    removeClass: function (cl) {
+      var classes = this.properties.class.split(' ');
+      var i = classes.indexOf(cl);
+      if (i >= 0 ) {
+        classes.splice(i, 1);
+        this.properties.class = classes.join(' ');
+        if (this.drawn) {
+          doc.getElementById(this.properties.id).setAttribute('class', this.properties.class);
         }
       }
       return this;
