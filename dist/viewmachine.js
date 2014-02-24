@@ -395,7 +395,7 @@ ViewMachine = (function (VM, doc) {
           if (this.drawn){
             return doc.getElementById(this.properties.id).style[prop];
           } else {
-            return this.style[value];
+            return this.style[prop];
           }
         }
         this.style[prop] = value;
