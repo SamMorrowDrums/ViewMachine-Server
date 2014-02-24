@@ -215,28 +215,28 @@ ViewMachine = (function (VM, doc) {
     },
     addClass: function (cl) {
       var classes;
-      if (!this.properties.class) {
+      if (!this.properties['class']) {
         classes = [];
       } else {
-        classes = this.properties.class.split(' ');
+        classes = this.properties['class'].split(' ');
       }
       if (classes.indexOf(cl) === -1) {
         classes.push(cl);
-        this.properties.class = classes.join(' ');
+        this.properties['class'] = classes.join(' ');
         if (this.drawn) {
-          doc.getElementById(this.properties.id).setAttribute('class', this.properties.class);
+          doc.getElementById(this.properties.id).setAttribute('class', this.properties['class']);
         }
       }
       return this;
     },
     removeClass: function (cl) {
-      var classes = this.properties.class.split(' ');
+      var classes = this.properties['class'].split(' ');
       var i = classes.indexOf(cl);
       if (i >= 0 ) {
         classes.splice(i, 1);
-        this.properties.class = classes.join(' ');
+        this.properties['class'] = classes.join(' ');
         if (this.drawn) {
-          doc.getElementById(this.properties.id).setAttribute('class', this.properties.class);
+          doc.getElementById(this.properties.id).setAttribute('class', this.properties['class']);
         }
       }
       return this;
