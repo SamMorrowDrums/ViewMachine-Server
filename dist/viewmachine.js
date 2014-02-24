@@ -50,7 +50,7 @@ ViewMachine = (function (VM) {
       }
       VM.event[event].push([callback, data]);
     } else {
-      throw('Type Error: expects, (string, function)');
+      throw('Type Error: VM.on expects, (string, function)');
     }
   };
 
@@ -294,7 +294,10 @@ ViewMachine = (function (VM, doc) {
       this.events.push({event: event, callback: callback});
       if (typeof callback === 'function') {
         if (this.drawn) {
-          VM.addEventListener(doc.getElementById(this.properties.id), event, callback);
+          VM.addEventListener(doc.getElementById(this.properties.id), event, function (e) {
+            e.data = this;
+            callback(e);
+          });
         }
       } else if (typeof callback === 'string') {
         if (this.drawn) {
@@ -389,7 +392,11 @@ ViewMachine = (function (VM, doc) {
       //Enables you to specifically set CSS for an element
       if (typeof prop === 'string') {
         if (value === undefined) {
-          return this.style[value];
+          if (this.drawn){
+            return doc.getElementById(this.properties.id).style[prop];
+          } else {
+            return this.style[value];
+          }
         }
         this.style[prop] = value;
         if (this.drawn){

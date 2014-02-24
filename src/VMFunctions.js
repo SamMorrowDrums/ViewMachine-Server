@@ -50,7 +50,7 @@ ViewMachine = (function (VM) {
       }
       VM.event[event].push([callback, data]);
     } else {
-      throw('Type Error: expects, (string, function)');
+      throw('Type Error: VM.on expects, (string, function)');
     }
   };
 
