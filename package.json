@@ -1,7 +1,7 @@
 {
     "name" : "viewmachine",
     "title" : "View Machine",
-    "version" : "0.0.4",
+    "version" : "0.0.5",
     "devDependencies": {
         "grunt": "~0.4.2",
         "grunt-contrib-concat": "0.1.3",
