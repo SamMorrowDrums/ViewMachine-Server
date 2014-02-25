@@ -137,7 +137,9 @@ ViewMachine = (function (VM, doc) {
       //Removes elements from their parents and from DOM if drawn
       if (this.drawn) {
         var el = doc.getElementById(this.properties.id);
-        el.parentNode.removeChild(el);
+        if (el) {
+          el.parentNode.removeChild(el);
+        }
         this.drawn = false;
       }
       this.properties.id = this.getId();
@@ -195,7 +197,12 @@ ViewMachine = (function (VM, doc) {
         removed = this.children.splice(pos, n, el);
         if (this.drawn && el!== undefined) {
           if (pos > 0) {
-            doc.getElementById(this.children[pos -1].properties.id).insertAdjacentHTML('afterend', el.html(true).outerHTML);
+            var temp = doc.getElementById(this.children[pos-1].properties.id);
+            if (temp) {
+              temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
+            } else {
+              this.append(el);
+            }
             el.drawn = true;
           } else {
             doc.getElementById(this.properties.id).appendChild(el.html(true));
