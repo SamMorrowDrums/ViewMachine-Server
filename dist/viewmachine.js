@@ -317,6 +317,10 @@ ViewMachine = (function (VM, doc) {
           el.parentNode.removeChild(el);
         }
         this.drawn = false;
+      } else {
+        if (!this.properties.id) {
+          this.properties.id = this.getId();
+        }
       }
       if (typeof this.parent !== 'string') {
         var children = this.parent.children;
