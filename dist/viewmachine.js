@@ -318,9 +318,7 @@ ViewMachine = (function (VM, doc) {
         }
         this.drawn = false;
       }
-      this.properties.id = this.getId();
       if (typeof this.parent !== 'string') {
-        this.getId();
         var children = this.parent.children;
         var len = children.length;
         for (var child = 0; child < len; child++) {
