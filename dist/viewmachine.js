@@ -679,7 +679,7 @@ ViewMachine = (function (VM, h) {
       } else {
         tempData = {};
       }
-      var i = 0, temp, v = 0, text, ie = false;
+      var i = 0, temp, v = 0, text;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;
@@ -715,8 +715,8 @@ ViewMachine = (function (VM, h) {
           } else if ((JSON.stringify(this.currentData[row]) !== JSON.stringify(data[row]))) {
              //JSON Stringify is not the way to do this. Need to look at ways that I can tell what has changed
             for (var x = 0; x < rows; x++) {
-              if (h.call(data[row], keys[x])) {
-                if (data[row][keys[x]] !== this.currentData[row][this.keys[x]]){
+              if (h.call(data[row], this.keys[x])) {
+                if (data[row][this.keys[x]] !== this.currentData[row][this.keys[x]]){
                   this.cell(i, x).text(data[row][this.keys[x]]);
                 }
               }
