@@ -378,7 +378,11 @@ ViewMachine = (function (VM, doc) {
           if (pos > 0) {
             var temp = doc.getElementById(this.children[pos-1].properties.id);
             if (temp) {
-              temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
+              try {
+                temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
+              } catch (e) {
+                this.parent.draw();
+              }
             } else {
               this.append(el);
             }
@@ -675,7 +679,7 @@ ViewMachine = (function (VM, h) {
       } else {
         tempData = {};
       }
-      var i = 0, temp, v = 0, text;
+      var i = 0, temp, v = 0, text, ie = false;
       for (var missingrow in this.currentData) {
         if (data[missingrow] === undefined){
           v++;

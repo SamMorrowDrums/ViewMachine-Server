@@ -202,7 +202,11 @@ ViewMachine = (function (VM, doc) {
           if (pos > 0) {
             var temp = doc.getElementById(this.children[pos-1].properties.id);
             if (temp) {
-              temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
+              try {
+                temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
+              } catch (e) {
+                this.parent.draw();
+              }
             } else {
               this.append(el);
             }
