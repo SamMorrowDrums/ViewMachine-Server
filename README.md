@@ -7,4 +7,4 @@ This module will be added to NPM eventually, but for now, to include this module
 
 `var VM = require('./viewmachine-server')`
 
-#Note: lower case vm is the nodeJS Virtual Machine built-in-module, either use VM, or the longer form ViewMachine to avoid conflict and confusion.#
+__Note: lower case vm is the nodeJS Virtual Machine built-in-module, either use VM, or the longer form ViewMachine to avoid conflict and confusion.__
