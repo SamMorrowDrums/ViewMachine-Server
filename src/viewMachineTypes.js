@@ -1,7 +1,4 @@
-if (ViewMachine === undefined) {
-  var ViewMachine = {};
-}
-ViewMachine = (function (VM, h) {
+(function (VM, h) {
   'use strict';
   /*
   This is the home of ViewMachine constructor functions for higher order HTML structures, such as Tables and Lists.
@@ -171,4 +168,4 @@ ViewMachine = (function (VM, h) {
   VM.properties.img = ['src', 'preload'];
 
   return VM;
-}(ViewMachine, Object.prototype.hasOwnProperty));
+}(exports, Object.prototype.hasOwnProperty));

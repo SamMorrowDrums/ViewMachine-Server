@@ -1,7 +1,4 @@
-if (ViewMachine === undefined) {
-  var ViewMachine = {};
-}
-ViewMachine = (function (VM) {
+(function (VM) {
   'use strict';
 
   VM.extend = function(out) {
@@ -87,4 +84,4 @@ ViewMachine = (function (VM) {
     return true;
   };
   return VM;
-}(ViewMachine));
+}(exports));

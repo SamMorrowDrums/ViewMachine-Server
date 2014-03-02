@@ -1,5 +1,4 @@
-var VM = ViewMachine;
-ViewMachine = (function (VM, doc) {
+(function (VM) {
   'use strict';
   /*
     This is a library of HTML element auto-constructors, that put single element types, or groups of elements like an unsorted list (ul, li), in the DOM (where applicable, capable of introspection, for more complex data. Designed to be used by template systems
@@ -15,7 +14,6 @@ ViewMachine = (function (VM, doc) {
     if (properties.id) {
       this.id = properties.id;
     }
-    this.drawn = false;
     this.properties = properties;
     this.children = [];
     this.events = [];
@@ -25,9 +23,6 @@ ViewMachine = (function (VM, doc) {
   VM.El.prototype = {
     text: function (text) {
       this.properties.text = text;
-      if (this.drawn) {
-        this.draw();
-      }
       return this;
     },
     getId: function () {
@@ -37,14 +32,9 @@ ViewMachine = (function (VM, doc) {
       }
       return (Math.floor(Math.random()* 10000000 + 1)).toString();
     },
-    html: function (draw) {
+    html: function () {
       //Returns HTML string of self and all child elements
-      if (!this.drawn) {
-        this.properties.id = this.getId();
-      }
-      if (draw) {
-        this.drawn = true;
-      }
+      this.properties.id = this.getId();
       var el = doc.createElement(this.element);
       for (var prop in this.properties) {
         if (prop === 'text') {
@@ -74,78 +64,13 @@ ViewMachine = (function (VM, doc) {
       }
       return this.html();
     },
-    draw: function () {
-      //Draws element, including all children, on the DOM
-      events = [];
-      if (this.drawn) {
-        //If already on the DOM, just redraw
-        this.replace(this.html(true).outerHTML);
-      } else {
-        var el;
-        if (typeof this.parent === 'string') {
-          //If parent is set as a jQuery identifier (default: body), then append to that element
-          el = doc.getElementsByTagName(this.parent)[0];
-          el.appendChild(this.html(true));
-          this.drawn = true;
-        } else if (this.parent.drawn === true) {
-          //If parent is a ViewMachine object, append self to the parent
-          el = doc.getElementById(this.parent.properties.id);
-          el.appendChild(this.html(true));
-          this.drawn = true;
-        } else {
-          throw('DrawError: Parent element not on page');
-        }
-      }
-      var n = events.length;
-      var str;
-      function caller (id, event, callback, element){
-        VM.addEventListener(doc.getElementById(id), event, function (e) {
-          VM.trigger(callback, element);
-        });
-      }
-      for (var i = 0; i < n; i++) {
-        if (typeof events[i][0].callback === 'function') {
-          VM.addEventListener(doc.getElementById(events[i][0].id), events[i][0].event, events[i][0].callback);
-        }
-        else {
-          caller(events[i][0].id, events[i][0].event, events[i][0].callback, events[i][1]);
-        }
-      }
-      return this;
-    },
     event: function (event, callback){
       //Method for adding events, that persist after a redraw
       this.events.push({event: event, callback: callback});
-      if (typeof callback === 'function') {
-        if (this.drawn) {
-          VM.addEventListener(doc.getElementById(this.properties.id), event, function (e) {
-            e.data = this;
-            callback(e);
-          });
-        }
-      } else if (typeof callback === 'string') {
-        if (this.drawn) {
-          var that = this;
-          VM.addEventListener(doc.getElementById(this.properties.id), event, function (e){
-            VM.trigger(callback, that);
-          });
-        }
-      }
       return this;
     },
     remove: function () {
-      //Removes elements from their parents and from DOM if drawn
-      if (this.drawn) {
-        var el = doc.getElementById(this.properties.id);
-        if (el) {
-          el.parentNode.removeChild(el);
-        }
-        this.drawn = false;
-      } else {
-        if (!this.properties.id) {
-          this.properties.id = this.getId();
-        }
-      }
+      //Removes elements from their parents
       if (typeof this.parent !== 'string') {
         var children = this.parent.children;
         var len = children.length;
@@ -158,38 +83,16 @@ ViewMachine = (function (VM, doc) {
       }
       return this;
     },
-    replace: function (HTML) {
-      //Replaces drawn elements with HTML, designed for updating DOM when 'this' is already drawn, and non-persistant replacement
-      if (this.drawn) {
-        doc.getElementById(this.properties.id).outerHTML = HTML;
-        return this;
-      }
-    },
-    hide: function () {
-      //Function for temporary hiding of an element, non-persistent version of removal
-      if (this.drawn) {
-        var el = doc.getElementById(this.properties.id);
-        el.parentNode.removeChild(el);
-        this.drawn = false;
-      }
-      return this;
-    },
     append: function (el) {
       //Sets up the parent child relationship of DOM element objects
       el.parent = this;
       this.children.push(el);
-      if (this.drawn) {
-        el.draw();
-      }
       return this;
     },
     prepend: function (el) {
       //Add an element as the first child
       el.parent = this;
       this.children = [el].concat(this.children);
-      if (this.drawn) {
-        this.draw();
-      }
       return this;
     },
     splice: function (pos, n, el) {
@@ -198,24 +101,6 @@ ViewMachine = (function (VM, doc) {
       if (el) {
         el.parent = this;
         removed = this.children.splice(pos, n, el);
-        if (this.drawn && el!== undefined) {
-          if (pos > 0) {
-            var temp = doc.getElementById(this.children[pos-1].properties.id);
-            if (temp) {
-              try {
-                temp.insertAdjacentHTML('afterend', el.html(true).outerHTML);
-              } catch (e) {
-                this.parent.draw();
-              }
-            } else {
-              this.append(el);
-            }
-            el.drawn = true;
-          } else {
-            doc.getElementById(this.properties.id).appendChild(el.html(true));
-            el.drawn = true;
-          }
-        }
       } else {
         removed = this.children.splice(pos, n);
       }
@@ -237,9 +122,6 @@ ViewMachine = (function (VM, doc) {
       if (classes.indexOf(cl) === -1) {
         classes.push(cl);
         this.properties['class'] = classes.join(' ');
-        if (this.drawn) {
-          doc.getElementById(this.properties.id).setAttribute('class', this.properties['class']);
-        }
       }
       return this;
     },
@@ -249,9 +131,6 @@ ViewMachine = (function (VM, doc) {
       if (i >= 0 ) {
         classes.splice(i, 1);
         this.properties['class'] = classes.join(' ');
-        if (this.drawn) {
-          doc.getElementById(this.properties.id).setAttribute('class', this.properties['class']);
-        }
       }
       return this;
     },
@@ -426,4 +305,4 @@ ViewMachine = (function (VM, doc) {
     return JSON.stringify(template);
   };
   return VM;
-}(ViewMachine, document));
+}(exports));
