@@ -146,7 +146,6 @@
     return video;
   };
 
-
   VM.Image = function (src, preloadSrc, attrs) {
     var img = new VM.El('img', {src: preloadSrc, 'data-img': src});
     img.preload = preloadSrc;
@@ -154,14 +153,6 @@
     for (var attr in attrs) {
       img.properties[attr] = attrs[attr];
     }
-    var source = new Image();
-    source.onload = function () {
-      img.properties.src = img.properties['data-img'];
-      if (img.drawn) {
-        img.draw();
-      }
-    };
-    source.src = src;
     return img;
   };
 
